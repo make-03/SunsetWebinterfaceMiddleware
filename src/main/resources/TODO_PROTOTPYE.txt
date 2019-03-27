@@ -1,0 +1,24 @@
+[IMPORTANT!]
+	-> Keystore-File + sunset.jar müssen in gleichen ordner sein wie die generierte *.jar datei von spring boot, wenn man die Applikation
+		über die Kommandozeile starten will!
+
+pototyp mit den wichtigsten funktionalitäten:
+	-> [DONE] senden von code von webseite an java 
+	-> [DONE] server kommuniziert über port 443 (SSL) -> verwenden eines privat signierten zertifikat (generiert mit "keytools")
+	-> [DONE] ausführen von sunset in java (über kommandozeile) und übergeben von code als parameter
+	-> [DONE] einlesen des resultates aus kommandozeile an java und senden an webseite
+	-> [DONE] parallele nutzung bereits möglich, wenn man daten in servlet lokal anlegt (für jeden user einzeln) DONE! (getestet lokalen mit 2 PCs)
+	
+	--------------------------------------------------
+	
+	-> [TODO] return html-file when returning result back to browser! (including a button to return to the main webinterface -> force reload!)
+	
+	-> [TODO] logging implementieren! (+persistentes speichern in file) TODO!
+	
+	-> [TODO] abbrechen des programmes bei einem user unterbricht auch berechnung für alle anderen parallelen user (taskkill java.exe)! 
+		-> außerdem wird bei ausführung über die kommandozeile das eigentliche Programm auch beendet
+		-> threadpool verwenden ODER pid des jeweiligen prozesses von user terminieren (taskkill -PID ...) ?
+			-> andere prozesse können unabhängig weiterlaufen
+	
+NOCH NICHT im prototyp enthalten
+	-> threadpools implementieren (überhaupt nötig? bei tomcat kann man max. verbindungen, max. worker threads)
