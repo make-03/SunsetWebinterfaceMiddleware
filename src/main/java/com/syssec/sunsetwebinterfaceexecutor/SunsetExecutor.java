@@ -26,8 +26,8 @@ public class SunsetExecutor {
 		if (!code.endsWith("END"))
 			code = code + "\nEND\n";
 
-		System.out.println("[INFO: Executing sunset in commandline provided code!]");
-		System.out.println(code);
+		System.out.println("[INFO: Executing sunset in commandline with provided code!]");
+		//System.out.println(code);
 		System.out.println(this.SEP_LINE);
 
 		Instant startTime = Instant.now();

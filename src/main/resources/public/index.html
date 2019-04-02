@@ -1,40 +1,178 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Sunset Webinterface Middleware PROTOTYP</title>
+
+<!-- OLD file name "sunset-max.html" -->
+
+<!--Let browser know website is optimized for mobile-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8">
+
+<!--Import Google Icons-->
+<link rel="stylesheet" href="/icons/google_icons.css">
+<!--Import materialize.css-->
+<link type="text/css" rel="stylesheet"
+	href="/library/materialize/css/materialize.min.css"
+	media="screen,projection" />
+<link type="text/css"
+	href="/library/css/jquery-ui-1.11.4.min.css">
+<!--Import ui-layout stylesheets-->
+<link rel="stylesheet"
+	href="/library/ui_layout/layout-default-latest.css">
+<!--Import CodeMirror stylesheets-->
+<link rel="stylesheet"
+	href="/library/codemirror/codemirror.css">
+<link rel="stylesheet"
+	href="/library/codemirror/themes/eclipse.css">
+<!--Good styles: eclipse-->
+
+<!--Import custom stylesheets-->
+<link rel="stylesheet" href="/templates/standard.css">
+<link rel="stylesheet" href="/templates/footer/footer.html">
+<link rel="stylesheet"
+	href="/templates/ffapl-sidenav/ffapl-sidenav.css">
+<link rel="stylesheet" href="/css/sunset-max-stylesheet.css">
+
+
+<title>Sunset WebInterface</title>
+
 </head>
-<body onload="loadPage()">
-	<h1>Sunset Webinterface PROTOTYP</h1>
-	<p>Webseite zum Testen der wichtigsten Funktionen für das Projekt</p>
-	<form action="/result" method="POST">
-		<!-- &#10; Line Feed and &#13; Carriage return (for text in textarea) -->
-		<textarea placeholder="ENTER CODE HERE" id="codeText" name="codeText" rows="8" cols="50"></textarea> <br /> 
-		<input type="submit" value="Send Code" id="sendBtn" onclick="calcResult()"/>
-		<input type="reset" value="Reset Code" id="resetBtn"/>
+
+<body>
+	<header>
+		<nav class="top-nav">
+			<a href="#" data-activates="nav-mobile"
+				class="left button-collapse top-nav full hide-on-large-only"><i
+				class="mdi-navigation-menu"></i></a>
+			<div class="container">
+				<div class="nav-wrapper center hide-on-med-and-down">
+					<a class="page-title">Sunset WebInterface</a>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<main> <!--Console Functions (Execute, Terminate, Undo, Redo, Save, Print File)-->
+	<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
+            others are added via function-panel.js-->
+
+	<!-- ADDED 2.4.2019 -->
+	<form action="/result" method="POST" id="sendForm">
+		<!-- &#10; Line Feed and &#13; Carriage return (for text in textarea) -->	
 	</form>
-	<br />
-	<form action="/cancelled" method="POST">
-		<input type="submit" value="Stop Calculation" id="stopBtn"/>
-	</form>
-	<br />
-	<p id="infoText"></p>
-	<input type="hidden" id="refreshed" value="no">
-</body>
-<script>
-	function loadPage(){
-		document.getElementById("sendBtn").disabled = false; 
-		document.getElementById("resetBtn").disabled = false;
-		document.getElementById("infoText").innerHTML = '';
-		document.getElementById("stopBtn").disabled = true;
-	}
 	
-	function calcResult(){
-		console.log('Button <Send Code> clicked, deactivating elements ...');
-		document.getElementById("sendBtn").disabled = true; 
-		document.getElementById("resetBtn").disabled = true;
-		document.getElementById("infoText").innerHTML = 'calculating result, please wait ...';
-		document.getElementById("stopBtn").disabled = false;
-	}
-</script>
+	<!-- ADDED 2.4.2019 -->
+	<form action="/cancelled" method="POST" id="cancelForm">
+	</form>
+
+	<div class="container">
+		<div id="function-panel" class="center">
+
+			<ul>
+				<li>
+					<!-- UPDATED 2.4.2019 js anpassen! -->
+					<button type="submit" id="sendBtn" data-tooltip="Ausf&uuml;hren"
+						onclick="onBtnExecute()" form="sendForm">
+						<i class="material-icons">play_arrow</i>
+					</button>
+				</li>
+
+				<!-- UPDATED 2.4.2019 js anpassen! -->
+				<li><button data-tooltip="Terminieren" id="stopBtn" form="cancelForm">
+						<i class="material-icons">stop</i>
+					</button></li>
+				<li><button data-tooltip="R&uuml;ckg&auml;ngig"
+						onclick="undo()">
+						<i class="material-icons">undo</i>
+					</button></li>
+				<li><button data-tooltip="Wiederherstellen" onclick="redo()">
+						<i class="material-icons">redo</i>
+					</button></li>
+				<li><button data-tooltip="Datei hochladen..."
+						class="modal-trigger" href="#modalUpload">
+						<i class="material-icons">file_upload</i>
+					</button></li>
+				<li><button data-tooltip="Speichern..." onclick="save()">
+						<i class="material-icons">save</i>
+					</button></li>
+				<li><button data-tooltip="Datei ausdrucken..."
+						onclick="print()">
+						<i class="material-icons">print</i>
+					</button></li>
+			</ul>
+
+		</div>
+	</div>
+
+	<!--Upload Dialog-->
+	<div id="modalUpload" class="modal">
+		<div class="modal-content">
+			<h4 class="center">Upload a file</h4>
+			<br>
+			<form action="#">
+				<div class="file-field input-field row">
+					<div class="btn">
+						<span>File</span> <input id="fileContainer" type="file"
+							accept=".ffapl">
+					</div>
+					<input id="filePathField" class="file-path validate col s10"
+						type="text">
+				</div>
+			</form>
+			<div class="center">
+				<button class="btn waves-effect" onclick="uploadFile()">
+					<i class="material-icons left">file_upload</i> Upload
+				</button>
+				<a class="btn waves-effect" onclick="cancelUpload()"> <i
+					class="material-icons left">cancel</i> Cancel
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!--Consoles-->
+	<div id="consoles" class="container non-selectable">
+		<div id="input-console" class="ui-layout-center">
+			<!-- UPDATED 2.4.2019 -->
+			<textarea id="inputTextArea" name="code" form="sendForm"></textarea>
+		</div>
+		<div id="output-console" class="ui-layout-south">
+			<p class="bold">Sunset Output:</p>
+			<div class="divider"></div>
+			<div id="outputTextArea"></div>
+		</div>
+	</div>
+	</main>
+	<footer class="page-footer"></footer>
+
+	<!--Import jQuery at first-->
+	<script src="/library/js/jquery-2.1.4.min.js"
+		charset="utf-8"></script>
+	<script src="/library/js/jquery-ui-1.11.4.min.js"
+		charset="utf-8"></script>
+	<script src="/library/ui_layout/jquery.layout-latest.js"
+		charset="utf-8"></script>
+	<script src="/templates/ffapl_api.js"></script>
+	<!--This script contains all information about Sunset (FFapl-API)-->
+	<script
+		src="/templates/ffapl-sidenav/ffapl-sidenav-init.js"></script>
+	<script src="/templates/footer/footer.js"></script>
+	<!--   <script src="../resources/sunset-interface/sun-if.js"></script> -->
+	<script src="/templates/database.js"></script>
+	<script src="/js/htmlEntities.js"></script>
+
+	<!--Import other scripts like CodeMirror or Materialize-->
+	<script src="/library/materialize/js/materialize.min.js"
+		charset="utf-8"></script>
+	<script src="/library/codemirror/codemirror.js"
+		charset="utf-8"></script>
+	<script
+		src="/library/codemirror/mode/custom_mode_jslike.js"
+		charset="utf-8"></script>
+
+	<script src="/js/sunset-max-frontend-functions.js" charset="utf-8"></script>
+
+	<script src="/library/js/md5.js" charset="utf-8"></script>
+
+
+</body>
 </html>

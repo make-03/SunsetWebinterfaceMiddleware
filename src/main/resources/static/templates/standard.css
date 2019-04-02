@@ -1,0 +1,125 @@
+/*Required for fixed footer*/
+body{
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+main{
+    flex: 1 0 auto;
+    height: 100%;
+}
+
+/*################################*/
+/*Change color*/
+/*################################*/
+nav.top-nav, .page-footer{
+    background-color: #1976d2 !important;
+}
+nav.top-nav{
+    box-shadow: none;
+    height: 122px;
+}
+a.button-collapse.top-nav.full{
+    line-height: 122px;
+}
+a.button-collapse.top-nav {
+    position: absolute;
+    text-align: center;
+    height: 48px;
+    width: 48px;
+    top: 0;
+    left: 7.5%;
+    float: none;
+    margin-left: 1.5rem;
+    color: #fff;
+    font-size: 32px;
+    z-index: 2;
+}
+nav.top-nav .container{
+    height: 100%;
+    line-height: 122px;
+} 
+nav .nav-wrapper a.page-title{
+    font-size: 36px;
+}
+nav.nav-top a.page-title{
+    line-height: 122px;
+} 
+
+a.bold, p.bold{
+    font-weight: bold;
+}
+
+a{
+    color: white;
+    -webkit-transition: color 100ms ease;
+    -moz-transition: color 100ms ease;
+    -o-transition: color 100ms ease;
+    transition: color 100ms ease;
+}
+a:hover{
+    color: #ddd;
+}
+
+a.page-title:hover{
+    color: inherit;
+}
+/*##################################*/
+/*Style the #nav-mobile element*/
+/*##################################*/
+.side-nav{
+    padding-bottom: 100px;
+}
+.side-nav a{
+    display: block;
+    padding: 0 15px;
+    color: #444;
+}
+.side-nav .collapsible li{
+    padding: 0px;
+    cursor: pointer;
+}
+.side-nav li.brand-logo>img{
+    width: 100%;
+    padding: 10px;
+}
+.side-nav li.header{
+    font-size: 30px;
+    font-weight: bold;
+}
+/*If an item in a list is not an actual item*/
+.side-nav li.no-item:hover{
+    background: transparent !important;
+}
+.side-nav .divider{
+    margin-bottom: 20px;
+} 
+.side-nav li{
+    line-height: 44px; 
+}
+.side-nav li a {
+    font-size: 15px;
+    line-height: 44px;
+    height: 44px;
+}
+
+
+/*####################################################################*/
+/*Style button*/
+/*Make buttons unselectable - doesn't highlight text if double-clicked*/
+/*####################################################################*/
+.not-selectable, .btn{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.btn{
+    background: #0d47a1 !important;
+}
+.btn:hover{
+    background: #1e88e5 !important;
+}

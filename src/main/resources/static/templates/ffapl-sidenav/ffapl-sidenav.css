@@ -1,0 +1,22 @@
+/*Set color of all last-layer a (e.g. for last layer item: Spezifikation>Typen>Integer <-- Integer is a last-layer a)
+  If the color is not set, it will inherit color of the parent li.active*/
+.side-nav a{
+    color: #444 !important;
+    line-height: inherit;
+    padding-left: 20px !important;
+    height: inherit;
+}
+.side-nav a:hover{
+    color: #444 !important;
+}
+/*Select all second-layer items. A second-layer item is: Spezification>Type <- whereas Type is a second-layer item*/
+.second-layer li.active{
+    background: transparent !important;
+}
+.second-layer li.active a{
+    color: #444 !important;
+}
+/*Add padding to each layer (layer structure is: Specifications>Types>Integer,Polynomial. Specifications and Types are layers*/
+.collapsible-body {
+    padding-left: 20px;
+}

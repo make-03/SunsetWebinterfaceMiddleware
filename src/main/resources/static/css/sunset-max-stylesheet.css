@@ -1,0 +1,62 @@
+header, main, footer{
+    padding-left: 300px;
+}
+@media only screen and (max-width : 992px) {
+    header, main, footer {
+        padding-left: 0;
+    }
+}
+
+/* Console Style - Start */
+#consoles{
+    min-height: 300px;
+    height: 60vh;
+}
+#input-console>textarea, #output-console>textarea, .CodeMirror{
+    height: 100%;
+    resize: none;
+}
+#input-console>textarea{
+    border: 1px solid #ddd;
+}
+#output-console>textarea, #output-console>textarea:focus{
+    border: none;
+    outline: none;
+}
+/* Console Style - End*/
+
+/* Fix dimension issues of the input-console within chrome */
+#input-console{
+    height: auto !important;
+    width: auto! important;
+}
+
+/* Styling */
+#output-console{
+    overflow: auto;
+    color: #797979;
+}
+
+/* Function-Panel Style - Start */
+#function-panel{
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+/*Prevent buttons to stick together by adding a margin*/
+#function-panel .btn{
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+#function-panel ul{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#function-panel li{
+    display: inline;
+}
+#function-panel li i{
+    color: #fff;
+    cursor: pointer !important;
+    font-size: 25px;
+}
+/* Function-Panel Style - End*/

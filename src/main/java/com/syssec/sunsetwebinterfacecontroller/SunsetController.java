@@ -14,8 +14,10 @@ import com.syssec.sunsetwebinterfaceexecutor.SunsetExecutor;
 public class SunsetController {
 
 	private final String SEP_LINE = "--------------------------------------------------------------------------------------------";
-
+	private boolean manCancel = false;
+	
 	public SunsetController() {
+		this.manCancel = false;
 		System.out.println("[INFO: Sunset Controller successfully loaded!]");
 		// TODO initialize logger
 		// TODO initialize thread pools ???
@@ -23,7 +25,8 @@ public class SunsetController {
 
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
 	@ResponseBody
-	public String getCode(@RequestParam("codeText") String code) {
+	public String getCode(@RequestParam("code") String code) {
+		this.manCancel = false;
 		SunsetExecutor exec = new SunsetExecutor();
 
 		if (code.length() == 0) {
@@ -37,6 +40,12 @@ public class SunsetController {
 
 		// execute code with sunset via the commandline
 		String result = exec.execCommand(code);
+		
+		if(this.manCancel == true) {
+			System.out.println("[INFO: Calculation was cancelled by user!]\n" + result);
+			System.out.println(this.SEP_LINE);
+			return String.format("CALCULATION WAS CANCELLED BY USER!");
+		}
 
 		System.out.println("[INFO: Result of sunset execution:]\n" + result);
 		System.out.println(this.SEP_LINE);
@@ -56,6 +65,7 @@ public class SunsetController {
 			 * TODO only kill corresponding sub-process of user (get PID?)
 			 */
 			Runtime.getRuntime().exec("taskkill /IM java.exe /F");
+			this.manCancel = true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

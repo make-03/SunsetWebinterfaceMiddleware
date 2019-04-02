@@ -1,0 +1,240 @@
+logAccess("sunset-max");
+var codeMirrorEditor; // Is initialized when calling initCodeMirror(...)
+var consoles            =   $('#consoles');
+var inputConsole        =   document.getElementById('inputTextArea');
+var outputConsole       =   $('#outputTextArea');
+
+// added 02.04.2019
+document.getElementById("sendBtn").disabled = false;
+document.getElementById("stopBtn").disabled = true;
+
+$(document).ready(function(){
+    /*Add the attributes 'data-tooltip' and 'data-delay' to each button of the function-panel*/
+    var functions = $('#function-panel>ul>li>button');
+    functions.each(function(){
+        $(this).prop({
+            "data-position":    "bottom",
+            "data-delay":       500
+        });
+        $(this).addClass("btn tooltipped waves-effect");
+    });
+    $('.tooltipped').tooltip({delay: 500});
+
+    // Initialize Splitter Layout
+    {
+        consoles.layout({
+            closable:           true,
+            resizable:		    true,
+            slidable:		    true,
+            livePaneResizing:	true,
+            togglerLength_open: 0,
+            minSize:            150
+        });
+
+        // Disable text-selection when dragging (or event trying to drag)
+
+        $.layout.disableTextSelection = function(){
+            var $d	= $(document),
+                s = 'textSelectionDisabled',
+                x='textSelectionInitialized';
+            if ($.fn.disableSelection) {
+                if (!$d.data(x)) // document hasn't been initialized yet
+                    $d.on('mouseup', $.layout.enableTextSelection ).data(x, true);
+                if (!$d.data(s))
+                    $d.disableSelection().data(s, true);
+            }
+        };
+        $.layout.enableTextSelection = function(){
+            var $d	= $(document), s='textSelectionDisabled';
+            if ($.fn.enableSelection && $d.data(s))
+                $d.enableSelection().data(s, false);
+        };
+        $(".ui-layout-resizer").disableSelection() // affects only the resizer element
+            .on('mousedown', $.layout.disableTextSelection ); // affects entire document
+    }
+
+    // Initialize CodeMirror
+    {
+        codeMirrorEditor = CodeMirror.fromTextArea(inputConsole, {
+            theme: "eclipse",
+            indentUnit: 2,
+            smartIndent: true,
+            tabSize: 4,
+            lineNumbers: true
+        });
+        $('#inputTextArea .CodeMirror').resizable({
+            resize: function() {
+                editor.setSize($('#input-console').width(), $('#input-console').height());
+            }
+        });
+
+        /*Drag n' Drop is already implemented in CodeMirror Editor!!!*/
+
+        /*Set default value of the codeMirror editor*/
+        codeMirrorEditor.getDoc().setValue('program calculate {\nprintln("Hello World!");\n}');
+    }
+
+
+
+    FFaplApiSideNav.init(false);
+    FFaplApiSideNav.appendVersionLink('min');
+    Footer.init();
+
+
+    // Initialize Plugins
+    $(".button-collapse").sideNav({
+        menuWidth: 300, // Default is 240
+        edge: 'left', // Choose the horizontal origin
+        closeOnClick: false // Closes the side-nav on <a> clicks
+    });
+    $('.collapsible').collapsible({
+        accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+    });
+    $('main .modal-trigger').leanModal();
+
+});
+
+// Button-functions for function panel
+{
+    //Transmitts the code to a server, and executes it there. Needs a callback-function for server-response.
+    function onBtnExecute(){
+    	// added 02.04.2019
+        document.getElementById("sendBtn").disabled = true;
+        document.getElementById("stopBtn").disabled = false;
+        
+        var code = codeMirrorEditor.getValue();
+        code = code.replace(/(\r\n|\n|\r)/g,"\n");
+        if(code.length>0){
+
+            var hash = calcMD5(code);
+            //processCode(code, function(data){processCodeSucceeded(data)}, function(data){processCodeFailed(data)});
+        }
+    }
+    //Represent the solution of the transmitted Code!!!
+    function processCodeSucceeded(data){
+        if(data){
+            data = htmlEntities(data);
+            if(outputConsole.html()){
+                outputConsole.append("<div class='divider'></div>")
+            }
+            outputConsole.append((new Date()).toLocaleTimeString());
+            outputConsole.append("<pre style='padding-left:20px; line-height:20px'>" + data + "</pre>");
+            // Scroll to bottom
+            var objDiv = document.getElementById("output-console");
+            objDiv.scrollTop = objDiv.scrollHeight;
+            document.getElementById("exeButton").disabled = false;
+        }
+    }
+    function processCodeFailed(data){
+        if(outputConsole.html()){
+            outputConsole.append("<br>")
+        }
+        outputConsole.append("An error occured: <br>" + data);
+    }
+
+    function onBtnStopExecution(){
+       /* killProgram(
+            function(data){
+                terminateProcessCallback(data);
+            }, function(data){
+                terminateProcessCallback(data);
+            });
+        */
+    	
+    	// added 02.04.2019
+        document.getElementById("sendBtn").disabled = false;
+        document.getElementById("stopBtn").disabled = true;
+    }
+
+    function terminateProcessCallback(data){
+        if(data){
+            data = htmlEntities(data);
+            if(outputConsole.html()){
+                outputConsole.append("<div class='divider'></div>")
+            }
+            outputConsole.append((new Date()).toLocaleTimeString());
+            outputConsole.append("<pre style='padding-left:20px; line-height:20px'>" + data + "</pre>");
+            // Scroll to bottom
+            var objDiv = document.getElementById("output-console");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }
+    }
+
+    function undo(){
+        codeMirrorEditor.execCommand('undo', true, null);
+    }
+
+    function redo(){
+        codeMirrorEditor.execCommand('redo', true, null);
+    }
+
+    /*Fetches the text of the CodeMirror and creates a file to store the code on local devices*/
+    function save(){
+        var textToWrite = codeMirrorEditor.getValue();
+        if(!textToWrite.length>0){alert("Please write something before saving.");return;}
+        var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
+        var fileNameToSaveAs = "code.ffapl";
+
+        var downloadLink = document.createElement("a");
+        downloadLink.download = fileNameToSaveAs;
+        downloadLink.innerHTML = "Download File";
+        if (window.URL != null)
+        {
+            // Chrome allows the link to be clicked
+            // without actually adding it to the DOM.
+            downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+        }
+        else
+        {
+            // Firefox requires the link to be added to the DOM
+            // before it can be clicked.
+            downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+            //downloadLink.onclick = destroyClickedElement();
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+        }
+
+        downloadLink.click();
+    }
+
+    /*Fetches the text(innerHTML) of the CodeMirror and prints it*/
+    function print(){
+        var textToWrite = codeMirrorEditor.getValue();
+        if(!textToWrite.length>0){alert("Please write something before printing.");return;}
+
+        var childWindow = window.open('','childWindow','location=yes, menubar=yes, toolbar=yes');
+        childWindow.document.open();
+        childWindow.document.write('<html><head></head><body>');
+        childWindow.document.write(textToWrite.replace(/\n/gi,'<br>'));
+        childWindow.document.write('</body></html>');
+        childWindow.print();
+        childWindow.document.close();
+        childWindow.close();
+    }
+
+    var fileContainer = $('#fileContainer');
+    var filePathField = $('#filePathField');
+    function uploadFile(){
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            // Great success! All the File APIs are supported - Show the dialog.
+            var files = fileContainer.prop('files');
+
+            var reader = new FileReader();
+            // Callback for FileReader when he finished reading a file
+            reader.onload = function(e){
+                codeMirrorEditor.getDoc().setValue(reader.result);
+                $('#modalUpload').closeModal();
+            }
+            for(var i=0, f; f=files[i]; i++){
+                var fileReader = reader.readAsText(f);
+            }
+        } else {
+            alert('Can\' upload file. The File APIs are not fully supported in this browser.');
+        }
+    }
+
+    function cancelUpload()
+    {
+        $('#modalUpload').closeModal();
+    }
+}

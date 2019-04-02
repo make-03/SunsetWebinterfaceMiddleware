@@ -1,6 +1,8 @@
 [IMPORTANT!]
 	-> Keystore-File + sunset.jar müssen in gleichen ordner sein wie die generierte *.jar datei von spring boot, wenn man die Applikation
 		über die Kommandozeile starten will!
+		
+[UPDATE 02.04.2019 -> updated minimal WebInterface to existing version!
 
 pototyp mit den wichtigsten funktionalitäten:
 	-> [DONE] senden von code von webseite an java 
