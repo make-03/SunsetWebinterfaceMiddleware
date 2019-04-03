@@ -37,6 +37,11 @@ header, main, footer{
     color: #797979;
 }
 
+/* ADDED 03.04.2019 */
+#outputTextArea{
+	height: 150px;
+}
+
 /* Function-Panel Style - Start */
 #function-panel{
     margin-top: 20px;

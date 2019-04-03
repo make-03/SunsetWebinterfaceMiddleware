@@ -9,6 +9,7 @@ document.getElementById("sendBtn").disabled = false;
 document.getElementById("stopBtn").disabled = true;
 
 $(document).ready(function(){
+	console.log('Initializing page ...');
     /*Add the attributes 'data-tooltip' and 'data-delay' to each button of the function-panel*/
     var functions = $('#function-panel>ul>li>button');
     functions.each(function(){
@@ -59,7 +60,7 @@ $(document).ready(function(){
             theme: "eclipse",
             indentUnit: 2,
             smartIndent: true,
-            tabSize: 4,
+            tabSize: 5,
             lineNumbers: true
         });
         $('#inputTextArea .CodeMirror').resizable({
@@ -71,15 +72,14 @@ $(document).ready(function(){
         /*Drag n' Drop is already implemented in CodeMirror Editor!!!*/
 
         /*Set default value of the codeMirror editor*/
-        codeMirrorEditor.getDoc().setValue('program calculate {\nprintln("Hello World!");\n}');
+        // codeMirrorEditor.getDoc().setValue('program calculate {\n\tprintln("Hello World!");\n}');
+        //codeMirrorEditor.getDoc().setValue('');
+        
     }
-
-
 
     FFaplApiSideNav.init(false);
     FFaplApiSideNav.appendVersionLink('min');
     Footer.init();
-
 
     // Initialize Plugins
     $(".button-collapse").sideNav({
@@ -91,7 +91,11 @@ $(document).ready(function(){
         accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
     });
     $('main .modal-trigger').leanModal();
-
+    
+    // ADDED 03.04.2019
+    outputConsole.scrollTop(outputConsole[0].scrollHeight);
+    
+    console.log('Finished initiaizing page!');
 });
 
 // Button-functions for function panel
@@ -99,6 +103,7 @@ $(document).ready(function(){
     //Transmitts the code to a server, and executes it there. Needs a callback-function for server-response.
     function onBtnExecute(){
     	// added 02.04.2019
+    	console.log('Clicked execution button!');
         document.getElementById("sendBtn").disabled = true;
         document.getElementById("stopBtn").disabled = false;
         
@@ -107,6 +112,8 @@ $(document).ready(function(){
         if(code.length>0){
 
             var hash = calcMD5(code);
+            // added 03.04.2019
+            console.log('MD5 Hash of Code: '+hash);
             //processCode(code, function(data){processCodeSucceeded(data)}, function(data){processCodeFailed(data)});
         }
     }
@@ -133,15 +140,17 @@ $(document).ready(function(){
     }
 
     function onBtnStopExecution(){
-       /* killProgram(
+        /*killProgram(
             function(data){
                 terminateProcessCallback(data);
             }, function(data){
                 terminateProcessCallback(data);
-            });
+            }
+        );
         */
     	
     	// added 02.04.2019
+    	console.log('Clicked cancel button!');
         document.getElementById("sendBtn").disabled = false;
         document.getElementById("stopBtn").disabled = true;
     }

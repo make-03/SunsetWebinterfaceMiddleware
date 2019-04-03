@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.syssec.sunsetexecutor.SunsetExecutor;
 
@@ -14,25 +14,26 @@ import com.syssec.sunsetexecutor.SunsetExecutor;
 public class SunsetController {
 
 	private final String SEP_LINE = "--------------------------------------------------------------------------------------------";
-	private boolean manCancel = false;
 	
 	public SunsetController() {
-		this.manCancel = false;
 		System.out.println("[INFO: Sunset Controller successfully loaded!]");
 		// TODO initialize logger
-		// TODO initialize thread pools ???
 	}
 
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
-	@ResponseBody
-	public String getCode(@RequestParam("code") String code) {
-		this.manCancel = false;
+	//@ResponseBody //DEPRECATED
+	public ModelAndView getCode(@RequestParam("code") String code) {
 		SunsetExecutor exec = new SunsetExecutor();
 
+		// if textarea for code is empty, no execution of sunset needed!
 		if (code.length() == 0) {
 			System.out.println("[INFO: EMPTY CODE RECEIVED; NO INPUT CODE!]");
 			System.out.println(this.SEP_LINE);
-			return String.format("NO INPUT CODE!");
+			//return String.format("NO INPUT CODE!");
+			ModelAndView modelAndViewEmptyCode = new ModelAndView("/index");
+		    modelAndViewEmptyCode.addObject("codeOriginal", "");
+		    modelAndViewEmptyCode.addObject("codeResult", "NO CODE RECEIVED! PLEASE ENTER SOME CODE FOR EXECUTION!");
+		    return modelAndViewEmptyCode;
 		}
 
 		System.out.println("[INFO: Code received!]\n" + code);
@@ -40,23 +41,22 @@ public class SunsetController {
 
 		// execute code with sunset via the commandline
 		String result = exec.execCommand(code);
-		
-		if(this.manCancel == true) {
-			System.out.println("[INFO: Calculation was cancelled by user!]\n" + result);
-			System.out.println(this.SEP_LINE);
-			return String.format("CALCULATION WAS CANCELLED BY USER!");
-		}
 
 		System.out.println("[INFO: Result of sunset execution:]\n" + result);
 		System.out.println(this.SEP_LINE);
 
-		// TODO return result inside a HTML-Page
-		return String.format("[Code:] %s\n[Result:] %s", code, result);
+		// DEPRECATED - was used for testing functionality
+		// return String.format("[Code:] %s\n[Result:] %s", code, result);
+		
+		ModelAndView modelAndView = new ModelAndView("/index");
+		modelAndView.addObject("codeOriginal", code);
+	    modelAndView.addObject("codeResult", result);
+	    return modelAndView;
 	}
 
 	@RequestMapping(value = { "/cancelled" }, method = RequestMethod.POST)
-	@ResponseBody
-	public String stopExecution() {
+	//@ResponseBody // DEPRECATED
+	public ModelAndView stopExecution() {
 		try {
 			/*
 			 * currently kills the main java process (including all sub processes, so other
@@ -65,15 +65,18 @@ public class SunsetController {
 			 * TODO only kill corresponding sub-process of user (get PID?)
 			 */
 			Runtime.getRuntime().exec("taskkill /IM java.exe /F");
-			this.manCancel = true;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		System.out.println("[INFO: Sunset execution was cancelled by the user!]");
 		System.out.println(this.SEP_LINE);
-
-		return String.format("[INFO: Calculation was cancelled by the user!]");
+		
+		// DEPRECATED - was used for testing functionality
+		// return String.format("[INFO: Calculation was cancelled by the user!]");
+		ModelAndView modelAndView = new ModelAndView("/index");
+	    modelAndView.addObject("codeResult", "EXECUTION WAS CANCELLED BY THE USER!");
+	    return modelAndView;
 	}
 
 }

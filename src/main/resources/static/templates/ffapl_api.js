@@ -305,8 +305,16 @@ API = {
         }
     ],
     programs: [
-        {
+    	// changed 03.04.2019 - changes single quotes inside print(ln) to double quotes (by escaping the double quotes -> \" )
+    	{
             id: "prog1",
+            name: "HelloWorld",
+            code: "program HelloWorld{\n" +
+                "	println(\"Hello World!\");\n" +
+                "}"
+        },
+    	{
+            id: "prog2",
             name: "RSAExample",
             code: "program RSAExample{\n" +
                 "	const p: Prime := getNextPrime(10^9);	\n" +
@@ -321,12 +329,12 @@ API = {
                 "	d := 1/e;  // determine e such that e*d = 1 (mod n)	\n" +
                 "	c := m^e;  // encryption of the message m	\n" +
                 "	m := c^d;  // decryption of the ciphertext c\n" +
-                "	println('c = ' + c);\n" +
-                "	println('m = ' + m);\n" +
+                "	println(\"c = \" + c);\n" +
+                "	println(\"m = \" + m);\n" +
                 "}"
         },
         {
-            id: "prog2",
+            id: "prog3",
             name: "MillerRabin",
             code: "program MillerRabin{\n" +
                 "	function MillerRabinTest(n: Integer; k: Integer) : Boolean {\n" +
@@ -367,11 +375,11 @@ API = {
                 "	n, k: Integer;\n" +
                 "	n := 1234567897156846189751687946494587238423904657; //2^10*7+1; //9787;\n" +
                 "	k := 10;\n" +
-                "	println('Miller-Rabin primality test for n = ' + n + ' yields ' + MillerRabinTest(n,k));\n" +
+                "	println(\"Miller-Rabin primality test for n = \" + n + \" yields \" + MillerRabinTest(n,k));\n" +
                 "}"
         },
         {
-            id: "prog3",
+            id: "prog4",
             name: "IrreduzibelPrimitiv",
             code: "program IrreduciblePrimitive {\n" +
                 "	/** \n" +
@@ -451,10 +459,10 @@ API = {
                 "	ply := [1 + x + 2x^2];\n" +
                 "	p := 3;\n" +
                 "	\n" +
-                "	println('irreducible? -> ' + isIrreducibleQ(ply, p));\n" +
-                "	println('primitive? -> ' + isPrimitiveQ(ply, p));\n" +
+                "	println(\"irreducible? -> \" + isIrreducibleQ(ply, p));\n" +
+                "	println(\"primitive? -> \" + isPrimitiveQ(ply, p));\n" +
                 "	\n" +
-                "	println('\nx^i for i = 1 ... ' + (p^degree(ply) - 1) + ':');\n" +
+                "	println(\"\nx^i for i = 1 ... \" + (p^degree(ply) - 1) + \":\");\n" +
                 "	pr := [x];\n" +
                 "	for i = 1 to p^degree(ply) - 1 {\n" +
                 "		println(pr^i MOD ply);\n" +
@@ -462,7 +470,7 @@ API = {
                 "}"
         },
         {
-            id: "prog4",
+            id: "prog5",
             name: "Polynomials",
             code: "program calculate{\n" +
                 "	x,a: Integer;\n" +
@@ -478,7 +486,7 @@ API = {
                 "}"
         },
         {
-            id: "prog5",
+            id: "prog6",
             name: "Arrays",
             code: "program calculate{\n" +
                 "	a: Prime[][];\n" +
@@ -493,7 +501,7 @@ API = {
                 "}"
         },
         {
-            id: "prog6",
+            id: "prog7",
             name: "StandardElGamal",
             code: "program StandardElGamal{\n" +
                 "	const p : Prime := 2063;\n" +
@@ -521,13 +529,13 @@ API = {
                 "	z := X;\n" +
                 "	h := g^z;\n" +
                 "	ciphertext := encrypt(message,h);\n" +
-                "	println('message: ' + message);\n" +
-                "	println('ciphertext: ' + ciphertext);\n" +
-                "	println('decrypted into: ' + str(decrypt(ciphertext,z)));\n" +
+                "	println(\"message: \" + message);\n" +
+                "	println(\"ciphertext: \" + ciphertext);\n" +
+                "	println(\"decrypted into: \" + str(decrypt(ciphertext,z)));\n" +
                 "}"
         },
         {
-            id: "prog7",
+            id: "prog8",
             name: "ECCEIGamal",
             code: "program ECCElGamal{\n" +
                 "	dr, kr: RandomGenerator(10^3:8831);	// random generators\n" +
@@ -544,15 +552,15 @@ API = {
                 "	C1 := k * G;\n" +
                 "	C2 := M + k * P;\n" +
                 "		\n" +
-                "	println('Original Message: ' + M);\n" +
-                "	println('Encrypted Message: (' + str(C1) + ',' + str(C2) + ')');\n" +
+                "	println(\"Original Message: \" + M);\n" +
+                "	println(\"Encrypted Message: (\" + str(C1) + \",\" + str(C2) + \")\");\n" +
                 "	//Alice decrypts\n" +
                 "	D := C2 - s * C1;\n" +
-                "	println('Decrypted Message: ' + D);	\n" +
+                "	println(\"Decrypted Message: \" + D);	\n" +
                 "}"
         },
         {
-            id: "prog8",
+            id: "prog9",
             name: "DiffieHellman",
             code: "program DiffieHellman{\n" +
                 "		\n" +
@@ -577,34 +585,34 @@ API = {
                 "	/*\n" +
                 "	 * Alice\n" +
                 "	*/\n" +
-                "	println('Alice: ');	\n" +
+                "	println(\"Alice: \");	\n" +
                 "	alice.a := Random(2 : p-2);\n" +
-                "	println('  Wählt zufällige Geheimzahl a = ' + alice.a);\n" +
+                "	println(\"  Wählt zufällige Geheimzahl a = \" + alice.a);\n" +
                 "	alice.g := g;\n" +
-                "	println('  Generator g = ' + alice.g);\n" +
+                "	println(\"  Generator g = \" + alice.g);\n" +
                 "	alice.A := alice.g^alice.a;\n" +
-                "	println('  Berechnet A = g^a = ' + alice.A);\n" +
-                "	println('  sendet (g, p, A) = (' + alice.g + ', ' + p + ', ' \n" +
-                "		+ alice.A + ') an Bob.');\n" +
+                "	println(\"  Berechnet A = g^a = \" + alice.A);\n" +
+                "	println(\"  sendet (g, p, A) = (\" + alice.g + \", \" + p + \", \" \n" +
+                "		+ alice.A + \") an Bob.\");\n" +
                 "	\n" +
                 "	/*\n" +
                 "	 * Bob\n" +
                 "	*/\n" +
-                "	println('\nBob: ');	\n" +
+                "	println(\"\nBob: \");	\n" +
                 "	bob.b := Random(2 : p-2);\n" +
-                "	println('  Wählt zufällige Geheimzahl b = ' + bob.b);\n" +
+                "	println(\"  Wählt zufällige Geheimzahl b = \" + bob.b);\n" +
                 "	bob.B := alice.g^bob.b;\n" +
-                "	println('  Berechnet B = g^b = ' + bob.B);\n" +
-                "	println('  sendet (B) = (' + bob.B + ') an Alice.');\n" +
+                "	println(\"  Berechnet B = g^b = \" + bob.B);\n" +
+                "	println(\"  sendet (B) = (\" + bob.B + \") an Alice.\");\n" +
                 "	bob.K := alice.A^bob.b;\n" +
-                "	println('  Berechnet K = A^b = ' + bob.K);\n" +
+                "	println(\"  Berechnet K = A^b = \" + bob.K);\n" +
                 "	\n" +
                 "	/*\n" +
                 "	 * Alice\n" +
                 "	*/\n" +
-                "	println('\nBob: ');\n" +
+                "	println(\"\nBob: \");\n" +
                 "	alice.K := bob.B^alice.a;	\n" +
-                "	println('  Berechnet K = B^a = ' + alice.K);\n" +
+                "	println(\"  Berechnet K = B^a = \" + alice.K);\n" +
                 "	\n" +
                 "	\n" +
                 "}"
@@ -648,20 +656,19 @@ API = {
                 id: "ep6",
                 name: "procTemplate()",
                 fullname: "procedure procTemplate()",
-                descr: "Template Prozedure."
+                descr: "Template Prozedur."
             }
         ]
 
     },
     snippets: [
-            /*
+            // testing 03.04.2019
             {
                 id:         "s1",
                 name:       "snippet1",
                 fullname:   "somesnippet1",      
                 descr:      "Description for snippet 1"
             }
-            */
 ],
 
     getFunctionById: function (id) {

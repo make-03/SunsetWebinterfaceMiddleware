@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 
 <!-- OLD file name "sunset-max.html" -->
@@ -51,7 +51,7 @@
 			</div>
 		</nav>
 	</header>
-	<main> <!--Console Functions (Execute, Terminate, Undo, Redo, Save, Print File)-->
+	<main role="main"> <!--Console Functions (Execute, Terminate, Undo, Redo, Save, Print File)-->
 	<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
             others are added via function-panel.js-->
 
@@ -77,7 +77,7 @@
 				</li>
 
 				<!-- UPDATED 2.4.2019 js anpassen! -->
-				<li><button data-tooltip="Terminieren" id="stopBtn" form="cancelForm">
+				<li><button data-tooltip="Terminieren" id="stopBtn" onlclick="onBtnStopExecution()" form="cancelForm">
 						<i class="material-icons">stop</i>
 					</button></li>
 				<li><button data-tooltip="R&uuml;ckg&auml;ngig"
@@ -132,13 +132,16 @@
 	<!--Consoles-->
 	<div id="consoles" class="container non-selectable">
 		<div id="input-console" class="ui-layout-center">
-			<!-- UPDATED 2.4.2019 -->
-			<textarea id="inputTextArea" name="code" form="sendForm"></textarea>
+			<!-- UPDATED 3.4.2019 -->
+			<textarea id="inputTextArea" name="code" form="sendForm" th:text="${codeOriginal}"></textarea>
 		</div>
 		<div id="output-console" class="ui-layout-south">
 			<p class="bold">Sunset Output:</p>
 			<div class="divider"></div>
-			<div id="outputTextArea"></div>
+			<div id="outputTextArea">	
+				<!-- ADDED 03.04.2019 -->
+				<textarea id="outputTextArea" th:text="${codeResult}" rows="10" readonly></textarea>
+			</div>
 		</div>
 	</div>
 	</main>
