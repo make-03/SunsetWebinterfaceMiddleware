@@ -52,14 +52,16 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
     * controller methods now return `ModelandView` instead of just `String` (plain text)
 * [03-04-2019] renamed `/resources/public` to `/resources/templates` to make **thymeleaf** work properly when calling cotroller-methods
 * [03-04-2019] modified `index.html` and `sunset-max-stylesheet.css` to better show the `outputTextField` and added code for **thymeleaf**
+* [03-04-2019] implemented the **save** function in the `sunset-max-frontend-functions.js`-file for the webinterface (save button) -> you can now download code from the input console as a `*.ffapl`-file and load these files via the **load** button
 
 ## List of features to implement/create in the future:
 * create logger class and store logging info (in local **log** files); create 2 seperate logging files for different content: **info.log** and **error.log**
 * edit existing `sunset webinterface`
-     * change/remove unused functions (java script)
+     * change/remove unused functions or scripts
           * e.g. program code for PHP (not used in this version!)
      * add basic console logging in java script
-     * change/remove elements (e.g. buttons or sidebar elements) 
+     * change/remove/restructure elements (e.g. buttons or sidebar elements)
+     * javascript-functions `undo()` and `redo()` currently do not work properly (using CodeMirror)
 * resolve problem with dispatcher-servlet when executing via the commandline (see: **UPDATE [03.04.2019]**)
 * implement solution for manually cancelling only the corresponding sunset process for a specific user instead of terminating all java processes
 * research `Docker` and its basic functionalities

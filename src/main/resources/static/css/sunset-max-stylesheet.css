@@ -39,13 +39,14 @@ header, main, footer{
 
 /* ADDED 03.04.2019 */
 #outputTextArea{
-	height: 150px;
+	resize: vertical;
+	height: 100px;
 }
 
 /* Function-Panel Style - Start */
 #function-panel{
     margin-top: 20px;
-    margin-bottom: 50px;
+    margin-bottom: 20px;  /* CHANGED 03.04.2019 */
 }
 /*Prevent buttons to stick together by adding a margin*/
 #function-panel .btn{

@@ -71,7 +71,7 @@ $(document).ready(function(){
 
         /*Drag n' Drop is already implemented in CodeMirror Editor!!!*/
 
-        /*Set default value of the codeMirror editor*/
+        /* REMOVED 03.04.2019 Set default value of the codeMirror editor*/
         // codeMirrorEditor.getDoc().setValue('program calculate {\n\tprintln("Hello World!");\n}');
         //codeMirrorEditor.getDoc().setValue('');
         
@@ -92,8 +92,13 @@ $(document).ready(function(){
     });
     $('main .modal-trigger').leanModal();
     
-    // ADDED 03.04.2019
+    // ADDED 03.04.2019 - Scroll to bottom of output text field
     outputConsole.scrollTop(outputConsole[0].scrollHeight);
+    var objDiv = document.getElementById("output-console");
+    objDiv.scrollTop = objDiv.scrollHeight;
+    
+    // focus cursor inside input textarea
+    //document.getElementById('inputTextArea').focus();
     
     console.log('Finished initiaizing page!');
 });
@@ -117,6 +122,8 @@ $(document).ready(function(){
             //processCode(code, function(data){processCodeSucceeded(data)}, function(data){processCodeFailed(data)});
         }
     }
+    
+    /* 03.04.2019
     //Represent the solution of the transmitted Code!!!
     function processCodeSucceeded(data){
         if(data){
@@ -138,6 +145,7 @@ $(document).ready(function(){
         }
         outputConsole.append("An error occured: <br>" + data);
     }
+    */
 
     function onBtnStopExecution(){
         /*killProgram(
@@ -155,6 +163,7 @@ $(document).ready(function(){
         document.getElementById("stopBtn").disabled = true;
     }
 
+    /* 03.04.2019
     function terminateProcessCallback(data){
         if(data){
             data = htmlEntities(data);
@@ -168,22 +177,61 @@ $(document).ready(function(){
             objDiv.scrollTop = objDiv.scrollHeight;
         }
     }
+	*/
 
+    /* 03.04.2019 - these functions (undo+redo) currently do not work properly */
     function undo(){
+    	console.log('Clicked undo button!');
         codeMirrorEditor.execCommand('undo', true, null);
     }
-
     function redo(){
+    	console.log('Clicked redo button!');
         codeMirrorEditor.execCommand('redo', true, null);
     }
 
     /*Fetches the text of the CodeMirror and creates a file to store the code on local devices*/
+    // UPDATED 03.04.2019
     function save(){
+    	console.log('Clicked the save button!');
         var textToWrite = codeMirrorEditor.getValue();
-        if(!textToWrite.length>0){alert("Please write something before saving.");return;}
-        var textFileAsBlob = new Blob([textToWrite], {type:'text/plain'});
-        var fileNameToSaveAs = "code.ffapl";
-
+        
+        // filename starts with code_ + current time (hh_mm_ss)
+        var date = new Date();
+        Date.prototype.timeNow = function () {
+            return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + 
+            	this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+        }
+        
+        var fileName = 'code_'+date.timeNow()+'.ffapl';
+        
+        if(!textToWrite.length>0){
+        	console.log('No code entered! Cannot save empty file!');
+        	alert("Please write something before saving.");
+        	return;
+        }
+        
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        
+        blob = new Blob([textToWrite], {type: "plain/text;charset=utf-8"}),
+        url = window.URL.createObjectURL(blob);
+        
+        console.group( "Object URL" );
+        console.log( "Text:", textToWrite );
+        console.log( "URL:", url );
+        console.groupEnd();
+        
+        a.href = url;
+        a.download = fileName;
+        
+        console.log('Prepared download link, starting download ...');
+        
+        a.click();
+        window.URL.revokeObjectURL(url);
+        
+        // OLD CODE - DEPRECATED 03.04.2019
+        /*
         var downloadLink = document.createElement("a");
         downloadLink.download = fileNameToSaveAs;
         downloadLink.innerHTML = "Download File";
@@ -202,12 +250,17 @@ $(document).ready(function(){
             downloadLink.style.display = "none";
             document.body.appendChild(downloadLink);
         }
+        console.log('Created download element!');
+        console.log('[DOWNLOAD LINK]: '+downloadLink);
 
         downloadLink.click();
+        */
+        
     }
 
     /*Fetches the text(innerHTML) of the CodeMirror and prints it*/
     function print(){
+    	console.log('Clicked the print button!');
         var textToWrite = codeMirrorEditor.getValue();
         if(!textToWrite.length>0){alert("Please write something before printing.");return;}
 
@@ -224,6 +277,7 @@ $(document).ready(function(){
     var fileContainer = $('#fileContainer');
     var filePathField = $('#filePathField');
     function uploadFile(){
+    	console.log('Clicked the upload button!');
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             // Great success! All the File APIs are supported - Show the dialog.
             var files = fileContainer.prop('files');

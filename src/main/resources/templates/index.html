@@ -46,7 +46,8 @@
 				class="mdi-navigation-menu"></i></a>
 			<div class="container">
 				<div class="nav-wrapper center hide-on-med-and-down">
-					<a class="page-title">Sunset WebInterface</a>
+					<!-- 03.04.2019 Added href (only works if this page is the default page on context path: "/") -->
+					<a class="page-title" href="/">Sunset WebInterface</a>
 				</div>
 			</div>
 		</nav>
@@ -77,7 +78,7 @@
 				</li>
 
 				<!-- UPDATED 2.4.2019 js anpassen! -->
-				<li><button data-tooltip="Terminieren" id="stopBtn" onlclick="onBtnStopExecution()" form="cancelForm">
+				<li><button data-tooltip="Terminieren" id="stopBtn" onclick="onBtnStopExecution()" form="cancelForm">
 						<i class="material-icons">stop</i>
 					</button></li>
 				<li><button data-tooltip="R&uuml;ckg&auml;ngig"
@@ -128,7 +129,7 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<!--Consoles-->
 	<div id="consoles" class="container non-selectable">
 		<div id="input-console" class="ui-layout-center">
@@ -140,7 +141,7 @@
 			<div class="divider"></div>
 			<div id="outputTextArea">	
 				<!-- ADDED 03.04.2019 -->
-				<textarea id="outputTextArea" th:text="${codeResult}" rows="10" readonly></textarea>
+				<textarea id="outputTextArea" th:text="${codeResult}" rows="5" readonly></textarea>
 			</div>
 		</div>
 	</div>
