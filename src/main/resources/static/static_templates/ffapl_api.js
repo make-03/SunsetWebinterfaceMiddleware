@@ -315,23 +315,38 @@ API = {
         },
     	{
             id: "prog2",
-            name: "RSAExample",
-            code: "program RSAExample{\n" +
-                "	const p: Prime := getNextPrime(10^9);	\n" +
-                "	const q: Prime := getNextPrime(p);\n" +
-                "	const n: Integer := p*q;	\n" +
-                "	const phi: Integer := (p-1)*(q-1);	\n" +
-                "	m,c: Z(n);\n" +
-                "	e,d: Z(phi);	\n" +
-                "	X: RandomGenerator(n);\n" +
-                "	m := 123456789;	// this is our message\n" +
-                "	e := 2*X+1;    // draw an odd random number	\n" +
-                "	d := 1/e;  // determine e such that e*d = 1 (mod n)	\n" +
-                "	c := m^e;  // encryption of the message m	\n" +
-                "	m := c^d;  // decryption of the ciphertext c\n" +
-                "	println(\"c = \" + c);\n" +
-                "	println(\"m = \" + m);\n" +
-                "}"
+            name: "RSAExampleUpdated",
+            code: "program RSA_Example{\n " +
+            	"	const p: Prime := 11;\n " +
+            	"	const q: Prime := 13;\n" + 
+            	" 	const N: Integer := p*q;\n" +
+            	" 	const phi: Integer := (p-1)*(q-1);\n" +
+            	" 	RNG: RandomGenerator(N-1);\n" +
+            	"	e1: Integer;\n" +
+            	"	e: Z(phi);\n" +
+            	"	d: Z(phi);\n" +
+            	"	M: Z(N);\n" +
+            	"	C: Z(N);\n" +
+            	"	x: Integer;\n" +
+            	"	\n " +
+            	"	// choose a value for e that is coprime to phi\n" +
+            	"	e1 := RNG;\n" +
+            	" 	x := gcd(e1,phi);\n" +
+            	"	while(x > 1) {\n" +
+            	"		e1 := e1 / x;\n" +
+            	"		x := gcd(e1, phi);\n" +
+            	"	}\n" +
+            	"	e := e1;\n" +
+            	"	\n" +
+            	"	// compute the secret key and verify the relation e*d=1 MOD phi\n" +
+            	"	d := e^(-1);\n" +
+            	"	println(\"e = \" + e + \", d = \" + d + \" e*d = \" + e*d);\n" +
+            	"	\n" +
+            	"	// encrypt and decrypt an example message\n" +
+            	"	M := 123;\n" +
+            	"	C := M^e;\n" +
+            	"	println(\"M = \" + M + \", C = \" + C + \", C^d = \" + C^d);\n" +
+            	"}"
         },
         {
             id: "prog3",

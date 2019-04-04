@@ -195,14 +195,29 @@ $(document).ready(function(){
     	console.log('Clicked the save button!');
         var textToWrite = codeMirrorEditor.getValue();
         
-        // filename starts with code_ + current time (hh_mm_ss)
+        // UPDATED 04.04.2019
         var date = new Date();
-        Date.prototype.timeNow = function () {
-            return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + 
-            	this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
-        }
+        /* code for dd_mm_yyyy format (day of the year)*/
+        var dd = date.getDate();
+        var mm = date.getMonth() + 1; //January is 0!
+        var yyyy = date.getFullYear();
+        if (dd < 10) {
+          dd = '0' + dd;
+        } 
+        if (mm < 10) {
+          mm = '0' + mm;
+        } 
+        var today = dd + '-' + mm + '-' + yyyy;
+        /* END code for dd_mm_yyyy format*/
         
-        var fileName = 'code_'+date.timeNow()+'.ffapl';
+        /* code for hh_mm_ss format (current timestamp)*/
+        Date.prototype.timeNow = function () {
+            return ((this.getHours() < 10)?"0":"") + this.getHours() +"-"+ ((this.getMinutes() < 10)?"0":"") + 
+            	this.getMinutes() +"-"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+        }
+        /* END code for hh_mm_ss format*/
+        
+        var fileName = 'sunsetcode_'+today+'_'+date.timeNow()+'.ffapl';
         
         if(!textToWrite.length>0){
         	console.log('No code entered! Cannot save empty file!');
