@@ -30,28 +30,14 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-> The following list of features is **not final** and certain things may change in the future (finished AND unfinished ones)!
+> The following lists of features is **not final** and certain things may change in the future (finished AND unfinished ones)!
 
 ## List of changes + working features:
-* [25-03-2019] created maven-project in eclipse + add dependencies: spring, spring-boot 
-* [25-03-2019] created basic structure for program (`src/main/java`, `src/main/resources`, `src/test/java`)
-* [25-03-2019] created basic webinterface + javascript
+* [04-04-2019] renamed `templates` folder to `static_templates` inside `src/main/resources/static` because there already exists a `templates`-folder which is used by the controller-class
+* [04-04-2019] updated code example for RSA to the current version in the `ffapl_api.js`-File
+* [04-04-2019] changed name of downloadable files from website (save-button) to automatically look like: `sunsetcode_<DD-MM-YYYY>_<HH-MM-SS>.ffapl`
 
-
-* [26-03-2019] created basic controller class for implementing HTTP-Methods (GET, POST etc.)
-* [26-03-2019] sending data (code for **sunset**) from webinterface (browser) to java-program (webserver)
-* [26-03-2019] communication with server only via port 443 (SSL enabled!) using privately signed certificate for testing (EXPERIMENTAL)
-
-
-* [27-03-2019] executing sunset (via commandline) using java + passing code from website
-* [27-03-2019] reading sunset output from commandline and sending it to the webinterface (only plain text for now)
-* [27-03-2019] parallel execution of several independent user requests already possible (data for each user created locally inside specific controller class, so each user has its own private data stored in memory)
-* [27-03-2019] manually cancelling execution of sunset possible (via button on website ONLY while code is executing) **BUT** currently terminates the main `java.exe` process which also terminates all other concurrent sunset executions AND the executable **jar**-file created by Spring-Boot if it is running via the command line
-
-
-* [02-04-2019] updated the minimal webinterface to the already existing one created by **Peter Pfaffeneder** with some modifications + added all the static web content under `/resources/static`
-* [02-04-2019] changed name of java packages for better readability + updated `pom.xml`
-
+---
 
 * [03-04-2019] resolved errors for code examples inside `ffapl_api.js`, changed **single quotes** to **double quotes** inside `print(ln)` statements
 * [03-04-2019] included template engine **thymeleaf** (added to `pom.xml`) and updated controller class to show results of the sunset execution in the correct element of the webinterface (`outputTextArea`)
@@ -60,10 +46,31 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 * [03-04-2019] modified `index.html` and `sunset-max-stylesheet.css` to better show the `outputTextField` and added code for **thymeleaf**
 * [03-04-2019] implemented the **save** function in the `sunset-max-frontend-functions.js`-file for the webinterface (save button) -> you can now download code from the input console as a `*.ffapl`-file and load these files via the **load** button
 
+---
 
-* [04-04-2019] renamed `templates` folder to `static_templates` inside `src/main/resources/static` because there already exists a `templates`-folder which is used by the controller-class
-* [04-04-2019] updated code example for RSA to the current version in the `ffapl_api.js`-File
-* [04-04-2019] changed name of downloadable files from website (save-button) to automatically look like: `sunsetcode_<DD-MM-YYYY>_<HH-MM-SS>.ffapl`
+* [02-04-2019] updated the minimal webinterface to the already existing one created by **Peter Pfaffeneder** with some modifications + added all the static web content under `/resources/static`
+* [02-04-2019] changed name of java packages for better readability + updated `pom.xml`
+
+---
+
+* [27-03-2019] executing sunset (via commandline) using java + passing code from website
+* [27-03-2019] reading sunset output from commandline and sending it to the webinterface (only plain text for now)
+* [27-03-2019] parallel execution of several independent user requests already possible (data for each user created locally inside specific controller class, so each user has its own private data stored in memory)
+* [27-03-2019] manually cancelling execution of sunset possible (via button on website ONLY while code is executing) **BUT** currently terminates the main `java.exe` process which also terminates all other concurrent sunset executions AND the executable **jar**-file created by Spring-Boot if it is running via the command line
+
+---
+
+* [26-03-2019] created basic controller class for implementing HTTP-Methods (GET, POST etc.)
+* [26-03-2019] sending data (code for **sunset**) from webinterface (browser) to java-program (webserver)
+* [26-03-2019] communication with server only via port 443 (SSL enabled!) using privately signed certificate for testing (EXPERIMENTAL)
+
+---
+
+* [25-03-2019] created maven-project in eclipse + add dependencies: spring, spring-boot 
+* [25-03-2019] created basic structure for program (`src/main/java`, `src/main/resources`, `src/test/java`)
+* [25-03-2019] created basic webinterface + javascript
+
+---
 
 ## List of features to implement/create in the future:
 * create logger class and store logging info (in local **log** files); create 2 seperate logging files for different content: **info.log** and **error.log**
@@ -79,8 +86,6 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 * implement solution for manually cancelling only the corresponding sunset process for a specific user instead of terminating all java processes
      * research process builder as a possible solution
      * use http session idea of user
-
-
 * **potential future tasks, currently not needed**     
      * research `Docker` and its basic functionalities
      * deploy generated .jar file + keystore + sunset.jar in docker-container and run it
