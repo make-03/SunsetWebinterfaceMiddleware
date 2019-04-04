@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 
 public class SunsetExecutor {
 
@@ -34,9 +35,10 @@ public class SunsetExecutor {
 		
 		try {
 	
+			//start the process to execute sunset
 			this.process = Runtime.getRuntime().exec("java -jar " + sunsetPath + " --cmd");
-
-			if (process.isAlive()) {
+			
+			//if (process.isAlive()) {
 				// Response and Request from the Process
 				BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 				BufferedWriter out = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
@@ -51,9 +53,14 @@ public class SunsetExecutor {
 				while ((line = in.readLine()) != null)
 					result += line + "\n";
 
-				// finished getting result, terminating process
+				// finished getting result, terminating process -> waitFor doesn't work yet
+				process.waitFor(5, TimeUnit.SECONDS); // if subprocess isnt finished in 5 seconds process will be destroyed!
 				process.destroy();
-			}
+				process.waitFor(); // wait for the process to terminate
+				
+				System.out.println("[INFO: sunset process destroyed!]");
+				System.out.println(this.SEP_LINE);
+			//}
 			
 			Instant endTime = Instant.now();
 			
@@ -63,22 +70,19 @@ public class SunsetExecutor {
 					+ "Duration: " + elapsedTime + "ms]");
 			System.out.println(this.SEP_LINE);
 			
-			if(process.isAlive()) {
-				killProcess();
-			}
+			// redundant
+//			if(process.isAlive()) {
+//				process.destroy();
+//			}
 
 			return result;
 
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			System.out.println("[ERROR: There was an exception when trying to execute sunset!]");
 			System.out.println(e.getMessage());
 			System.out.println(this.SEP_LINE);
 			return e.getMessage();
 		}
-	}
-	
-	private void killProcess() {
-		process.destroyForcibly();
 	}
 	
 }

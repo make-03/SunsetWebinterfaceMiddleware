@@ -21,7 +21,6 @@ public class SunsetController {
 	}
 
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
-	//@ResponseBody //DEPRECATED
 	public ModelAndView getCode(@RequestParam("code") String code) {
 		SunsetExecutor exec = new SunsetExecutor();
 
@@ -30,7 +29,7 @@ public class SunsetController {
 			System.out.println("[INFO: EMPTY CODE RECEIVED; NO INPUT CODE!]");
 			System.out.println(this.SEP_LINE);
 			//return String.format("NO INPUT CODE!");
-			ModelAndView modelAndViewEmptyCode = new ModelAndView("/index");
+			ModelAndView modelAndViewEmptyCode = new ModelAndView("index");
 		    modelAndViewEmptyCode.addObject("codeOriginal", "");
 		    modelAndViewEmptyCode.addObject("codeResult", "NO CODE RECEIVED! PLEASE ENTER SOME CODE FOR EXECUTION!");
 		    return modelAndViewEmptyCode;
@@ -48,14 +47,13 @@ public class SunsetController {
 		// DEPRECATED - was used for testing functionality
 		// return String.format("[Code:] %s\n[Result:] %s", code, result);
 		
-		ModelAndView modelAndView = new ModelAndView("/index");
+		ModelAndView modelAndView = new ModelAndView("index");
 		modelAndView.addObject("codeOriginal", code);
 	    modelAndView.addObject("codeResult", result);
 	    return modelAndView;
 	}
 
 	@RequestMapping(value = { "/cancelled" }, method = RequestMethod.POST)
-	//@ResponseBody // DEPRECATED
 	public ModelAndView stopExecution() {
 		try {
 			/*
@@ -74,7 +72,7 @@ public class SunsetController {
 		
 		// DEPRECATED - was used for testing functionality
 		// return String.format("[INFO: Calculation was cancelled by the user!]");
-		ModelAndView modelAndView = new ModelAndView("/index");
+		ModelAndView modelAndView = new ModelAndView("index");
 	    modelAndView.addObject("codeResult", "EXECUTION WAS CANCELLED BY THE USER!");
 	    return modelAndView;
 	}
