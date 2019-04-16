@@ -54,48 +54,51 @@
 	</header>
 	<main role="main"> <!--Console Functions (Execute, Terminate, Undo, Redo, Save, Print File)-->
 	<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
-            others are added via function-panel.js-->
+            others are added via function-panel.js-->          
 
 	<!-- ADDED 2.4.2019 -->
 	<form action="/result" method="POST" id="sendForm">
-		<!-- &#10; Line Feed and &#13; Carriage return (for text in textarea) -->	
 	</form>
-	
-	<!-- ADDED 2.4.2019 -->
 	<form action="/cancelled" method="POST" id="cancelForm">
 	</form>
+	
+	<!-- ADDED 16.04.2019 -->
+    <textarea hidden="true" id="uniqueId" name="uniqueId" form="sendForm" readonly></textarea>
+    <!-- redundant info for cancelForm, because you cannot define 2 forms in 1 html-attribute! -->
+    <textarea hidden="true" id="uniqueId2" name="uniqueId2" form="cancelForm" readonly></textarea>
 
 	<div class="container">
 		<div id="function-panel" class="center">
 
 			<ul>
 				<li>
-					<!-- UPDATED 2.4.2019 js anpassen! -->
-					<button type="submit" id="sendBtn" data-tooltip="Ausf&uuml;hren"
-						onclick="onBtnExecute()" form="sendForm">
+					<!-- UPDATED 2.4.2019 js anpassen! type="submit" -->
+					<button id="sendBtn" data-tooltip="Ausf&uuml;hren" onclick="onBtnExecute()" 
+						form="sendForm" name="btnSend">
 						<i class="material-icons">play_arrow</i>
 					</button>
 				</li>
 
 				<!-- UPDATED 2.4.2019 js anpassen! -->
-				<li><button data-tooltip="Terminieren" id="stopBtn" onclick="onBtnStopExecution()" form="cancelForm">
+				<li><button id="stopBtn" data-tooltip="Terminieren" onclick="onBtnStopExecution()" 
+						form="cancelForm" name="btnCancel">
 						<i class="material-icons">stop</i>
 					</button></li>
-				<li><button data-tooltip="R&uuml;ckg&auml;ngig"
+				<li><button id="undoBtn" data-tooltip="R&uuml;ckg&auml;ngig"
 						onclick="undo()">
 						<i class="material-icons">undo</i>
 					</button></li>
-				<li><button data-tooltip="Wiederherstellen" onclick="redo()">
+				<li><button id="redoBtn" data-tooltip="Wiederherstellen" onclick="redo()">
 						<i class="material-icons">redo</i>
 					</button></li>
-				<li><button data-tooltip="Datei hochladen..."
+				<li><button id="uploadBtn" data-tooltip="Datei hochladen..."
 						class="modal-trigger" href="#modalUpload">
 						<i class="material-icons">file_upload</i>
 					</button></li>
-				<li><button data-tooltip="Speichern..." onclick="save()">
+				<li><button id="saveBtn" data-tooltip="Speichern..." onclick="save()">
 						<i class="material-icons">save</i>
 					</button></li>
-				<li><button data-tooltip="Datei ausdrucken..."
+				<li><button id="printBtn" data-tooltip="Datei ausdrucken..."
 						onclick="print()">
 						<i class="material-icons">print</i>
 					</button></li>
@@ -161,7 +164,9 @@
 		src="/static_templates/ffapl-sidenav/ffapl-sidenav-init.js"></script>
 	<script src="/static_templates/footer/footer.js"></script>
 	<!--   <script src="../resources/sunset-interface/sun-if.js"></script> -->
-	<script src="/static_templates/database.js"></script>
+	
+	<!-- removed 15.04.2019 - contians PHP-code, not needed for this project -->
+	<!--  <script src="/static_templates/database.js"></script> -->
 	<script src="/js/htmlEntities.js"></script>
 
 	<!--Import other scripts like CodeMirror or Materialize-->
@@ -176,7 +181,6 @@
 	<script src="/js/sunset-max-frontend-functions.js" charset="utf-8"></script>
 
 	<script src="/library/js/md5.js" charset="utf-8"></script>
-
 
 </body>
 </html>
