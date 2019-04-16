@@ -33,6 +33,16 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 > The following lists of features is **not final** and certain things may change in the future (finished AND unfinished ones)!
 
 ## List of changes + working features:
+* [16-04-2019] created custom Error Controller + added error pages (HTML) for `general error`, `error 404` and `error 500`
+* [16-04-2019] wrote basic documentation for java-classes and -methods
+* [16-04-2019] added unique ID generation in javascript for webinterface
+   * every time the webinterface is loaded a unique ID is created for user
+   * ID is sent to controller to identify which user sent which code/request
+* [16-04-2019] updated index.html + sunset-max-frontend-functions.js
+* [16-04-2019] deleted old/unused *.css-, *.js-files
+
+---
+
 * [04-04-2019] renamed `templates` folder to `static_templates` inside `src/main/resources/static` because there already exists a `templates`-folder which is used by the controller-class
 * [04-04-2019] updated code example for RSA to the current version in the `ffapl_api.js`-File
 * [04-04-2019] changed name of downloadable files from website (save-button) to automatically look like: `sunsetcode_<DD-MM-YYYY>_<HH-MM-SS>.ffapl`
@@ -84,7 +94,7 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
      * limiting concurrent threads in `application.properties` and test what happens when several users want to execute code concurrently
      * what happens if user closes browser window during execution of code?
 * implement solution for manually cancelling only the corresponding sunset process for a specific user instead of terminating all java processes
-     * research process builder as a possible solution
+     * research existing code from old webinterface (threadpools + timeouts etc.)
      * maybe use session id to uniquely identify client requests (and map them to corresponding pid -> use Map-datatype)
 * **potential future tasks, currently not needed**     
      * research `Docker` and its basic functionalities
@@ -92,4 +102,4 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-Last edited @ [04.04.2019]
+Last edited @ [16.04.2019]
