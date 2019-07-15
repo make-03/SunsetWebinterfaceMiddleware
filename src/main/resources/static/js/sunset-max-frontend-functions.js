@@ -148,7 +148,7 @@ $(document)
 																				// for
 																				// "cancelForm"
 
-					console.log('Finished initiaizing page!');
+					console.log('Page successfully initialized!');
 				});
 
 // Button-functions for function panel

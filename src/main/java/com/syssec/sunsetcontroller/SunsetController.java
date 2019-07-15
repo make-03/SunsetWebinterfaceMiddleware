@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.syssec.sunsetexecutor.SunsetExecutor;
+import com.syssec.sunsetthreadpool.SunsetThreadPool;
 
 /**
  * Controller class for communication between client (browser) and server.
@@ -22,10 +23,12 @@ import com.syssec.sunsetexecutor.SunsetExecutor;
 public class SunsetController {
 
 	private final String SEP_LINE = "--------------------------------------------------------------------------------------------";
+	
+	private SunsetThreadPool threadPool;
 
 	public SunsetController() {
-		System.out.println("[INFO: Sunset Controller successfully loaded!]");
-		// TODO initialize logger
+		this.threadPool = new SunsetThreadPool(10);
+		System.out.println("[INFO: Sunset Controller successfully loaded!]");	
 	}
 
 	/**
@@ -58,6 +61,10 @@ public class SunsetController {
 
 		// execute code with sunset via the commandline
 		String result = exec.execCommand(code);
+		
+		// TESTING thead pool functionality
+		threadPool.addThread(id);
+		System.out.println("THREADS IN THREAD POOL: " + threadPool.getThreads());
 
 		System.out.println("[INFO {ID = "+id+"}: Result of sunset execution:]\n" + result);
 		System.out.println(this.SEP_LINE);
