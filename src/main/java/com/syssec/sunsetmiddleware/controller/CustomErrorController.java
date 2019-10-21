@@ -1,4 +1,4 @@
-package com.syssec.sunsetcontroller;
+package com.syssec.sunsetmiddleware.controller;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;

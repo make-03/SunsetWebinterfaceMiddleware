@@ -1,4 +1,4 @@
-package com.syssec.sunsetmain;
+package com.syssec.sunsetmiddleware.main;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,10 +13,10 @@ import static org.springframework.boot.SpringApplication.*;
  * @author Markus R.
  *
  */
-@ComponentScan(basePackageClasses = com.syssec.sunsetcontroller.SunsetController.class)
-@ComponentScan(basePackageClasses = com.syssec.sunsetcontroller.CustomErrorController.class)
-@ComponentScan(basePackageClasses = com.syssec.sunsetexecutor.SunsetExecutor.class)
-@ComponentScan(basePackageClasses = com.syssec.sunsetthreadpool.SunsetThreadPool.class)
+@ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.controller.SunsetController.class)
+@ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.controller.CustomErrorController.class)
+@ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.executor.SunsetExecutor.class)
+@ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool.class)
 @SpringBootApplication
 public class App {
 	public static void main(String[] args) {

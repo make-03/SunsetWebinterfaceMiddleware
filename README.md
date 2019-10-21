@@ -33,6 +33,15 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 > The following lists of features is **not final** and certain things may change in the future (finished AND unfinished ones)!
 
 ## List of changes + working features:
+* [21-10-2019] implemented the SunsetThreadPool class to allow concurrent execution of several sunset processes
+* [21-10-2019] adjusted code in SunsetController and SunsetExecutor for utilizing the new Thread Pool functionality
+* [21-10-2019] added a timeout for automatically interrupting threads after a specified time
+* [21-10-2019] users can now manually cancel execution of the code in the Webinterface by pressing the Stop-Button during the execution. Only the corresponding thread and sunset process are interrupted/destroyed.
+* [21-10-2019] code is now preserved when user manually cancels the execution of code
+* [21-10-2019] added openjfx to pom.xml to be able to use datastructure `Pair`
+
+---
+
 * [16-04-2019] created custom Error Controller + added error pages (HTML) for `general error`, `error 404` and `error 500`
 * [16-04-2019] wrote basic documentation for java-classes and -methods
 * [16-04-2019] added unique ID generation in javascript for webinterface
@@ -93,13 +102,12 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 * testing of the following scenarios:
      * limiting concurrent threads in `application.properties` and test what happens when several users want to execute code concurrently
      * what happens if user closes browser window during execution of code?
-* implement solution for manually cancelling only the corresponding sunset process for a specific user instead of terminating all java processes
-     * research existing code from old webinterface (threadpools + timeouts etc.)
-     * maybe use session id to uniquely identify client requests (and map them to corresponding pid -> use Map-datatype)
+* improve unique id generation for each user in javascript
+
 * **potential future tasks, currently not needed**     
      * research `Docker` and its basic functionalities
      * deploy generated .jar file + keystore + sunset.jar in docker-container and run it
 
 ---
 
-Last edited @ [16.04.2019]
+Last edited @ [21.10.2019]

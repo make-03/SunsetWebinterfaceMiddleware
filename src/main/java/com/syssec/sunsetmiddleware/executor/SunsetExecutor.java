@@ -1,4 +1,4 @@
-package com.syssec.sunsetexecutor;
+package com.syssec.sunsetmiddleware.executor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class for managing the execution of the received code with sunset (via
@@ -21,7 +20,7 @@ public class SunsetExecutor {
 	private String sunsetPath = "sunset.jar";
 	private Process process;
 
-	private final String SEP_LINE = "--------------------------------------------------------------------------------------------";
+	private final String SEP_LINE = "------------------------------------------------";
 
 	public SunsetExecutor() {
 
@@ -31,11 +30,11 @@ public class SunsetExecutor {
 	 * Method used for executing sunset via commandline using the code sent by the
 	 * user.
 	 * 
-	 * @param _code - Code received by the user
+	 * @param code - Code received by the user
 	 * @return result of code execution as plain text (String)
 	 */
-	public String execCommand(String _code) {
-		String code = _code;
+	public String executeCommand(String receivedCode) {
+		String code = receivedCode;
 		String result = "EMPTY";
 
 		if (!code.endsWith("END"))
@@ -52,8 +51,6 @@ public class SunsetExecutor {
 			// start the process to execute sunset
 			this.process = Runtime.getRuntime().exec("java -jar " + sunsetPath + " --cmd");
 
-			// if (process.isAlive()) {
-			// Response and Request from the Process
 			BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			BufferedWriter out = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
 
@@ -67,31 +64,28 @@ public class SunsetExecutor {
 			while ((line = in.readLine()) != null)
 				result += line + "\n";
 
-			// finished getting result, terminating process -> waitFor doesn't work yet
-			process.waitFor(5, TimeUnit.SECONDS); // if subprocess isnt finished in 5 seconds process will be destroyed!
-			process.destroy();
-			process.waitFor(); // wait for the process to terminate
-
-			System.out.println("[INFO: sunset process destroyed!]");
-			System.out.println(this.SEP_LINE);
-			// }
+			this.destroyProcess();
 
 			Instant endTime = Instant.now();
 
 			long elapsedTime = Duration.between(startTime, endTime).toMillis();
 
 			System.out
-					.println("[INFO: Finished sunset execution in commandline! " + "Duration: " + elapsedTime + "ms]");
+					.println("[INFO: Duration of sunset execution: " + elapsedTime + "ms]");
 			System.out.println(this.SEP_LINE);
 
 			return result;
 
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException e) {
 			System.out.println("[ERROR: There was an exception when trying to execute sunset!]");
 			System.out.println(e.getMessage());
 			System.out.println(this.SEP_LINE);
 			return e.getMessage();
 		}
+	}
+	
+	public void destroyProcess() {
+		this.process.destroy();
 	}
 
 }
