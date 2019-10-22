@@ -74,7 +74,7 @@ public class SunsetExecutor {
 					.println("[INFO: Duration of sunset execution: " + elapsedTime + "ms]");
 			System.out.println(this.SEP_LINE);
 
-			return result;
+			return result.trim();
 
 		} catch (IOException e) {
 			System.out.println("[ERROR: There was an exception when trying to execute sunset!]");
