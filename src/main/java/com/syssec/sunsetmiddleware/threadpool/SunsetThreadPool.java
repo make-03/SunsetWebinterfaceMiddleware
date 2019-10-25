@@ -13,8 +13,8 @@ import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
 import javafx.util.Pair;
 
 /**
- * Class for managing the thread pool and the threads currently running. Each
- * thread exectutes its own process of sunset to calculate the result.
+ * Class for managing the ExecutorService using a FixedThreadPool. Each
+ * thread (Future<String> object) starts its own process of sunset to calculate the result.
  * 
  * @author Markus R.
  *
@@ -22,6 +22,7 @@ import javafx.util.Pair;
 public class SunsetThreadPool {
 
 	private static final int DEFAULT_NUMBER_OF_THREADS = 8;
+	
 	private int maxNumberOfThreads = SunsetThreadPool.DEFAULT_NUMBER_OF_THREADS;
 	private int defaultTimeoutSeconds = 5;
 
@@ -39,20 +40,19 @@ public class SunsetThreadPool {
 	}
 
 	public SunsetThreadPool(int max_threads, int timeout_seconds) {
-		if(max_threads <= 0) {
+		if (max_threads <= 0) {
 			throw new IllegalArgumentException("Maximum number of threads must be >0!");
 		}
-		if(timeout_seconds <= 0) {
+		if (timeout_seconds <= 0) {
 			throw new IllegalArgumentException("Timeout in seconds must be >0!");
 		}
-		
+
 		this.maxNumberOfThreads = max_threads;
 		this.executorService = Executors.newFixedThreadPool(this.maxNumberOfThreads);
 		this.defaultTimeoutSeconds = timeout_seconds;
 	}
 
-	public String runSunsetExecutor(String code, String id)
-			throws InterruptedException, ExecutionException {
+	public String runSunsetExecutor(String code, String id) throws InterruptedException, ExecutionException {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
 
 		String result;
@@ -63,13 +63,14 @@ public class SunsetThreadPool {
 			sunsetExecutor.destroyProcess();
 			e.printStackTrace();
 		}
-		
+
 		this.idToFutureMap.remove(id);
-		
+
 		return result;
 	}
-	
-	public String getFutureResult(SunsetExecutor sunsetExecutor, String code, String id) throws InterruptedException, ExecutionException, TimeoutException {
+
+	public String getFutureResult(SunsetExecutor sunsetExecutor, String code, String id)
+			throws InterruptedException, ExecutionException, TimeoutException {
 		Future<String> future = executorService.submit(() -> {
 			try {
 				return sunsetExecutor.executeCommand(code);
@@ -81,12 +82,11 @@ public class SunsetThreadPool {
 		});
 
 		this.idToFutureMap.put(id, new Pair<Future<String>, SunsetExecutor>(future, sunsetExecutor));
-		
+
 		return future.get(this.defaultTimeoutSeconds, TimeUnit.SECONDS);
 	}
 
 	public boolean cancelExecutionOfSpecificThread(String id) {
-		System.out.println("Map Entries: " + this.idToFutureMap.entrySet().toString());
 		if (this.idToFutureMap.containsKey(id)) {
 			this.idToFutureMap.get(id).getValue().destroyProcess();
 			this.idToFutureMap.get(id).getKey().cancel(true);
@@ -104,9 +104,9 @@ public class SunsetThreadPool {
 	public int getTimeoutSeconds() {
 		return this.defaultTimeoutSeconds;
 	}
-	
+
 	public void setTimeoutSeconds(int timeoutSeconds) {
-		if(timeoutSeconds <= 0) {
+		if (timeoutSeconds <= 0) {
 			throw new IllegalArgumentException("Timeout in seconds must be >0!");
 		}
 		this.defaultTimeoutSeconds = timeoutSeconds;
@@ -115,9 +115,9 @@ public class SunsetThreadPool {
 	public int getMaxNumberOfThreads() {
 		return this.maxNumberOfThreads;
 	}
-	
+
 	public void setMaxNumberOfThreads(int maxNumberOfThreads) {
-		if(maxNumberOfThreads <= 0) {
+		if (maxNumberOfThreads <= 0) {
 			throw new IllegalArgumentException("Maximum number of threads must be >0!");
 		}
 		this.maxNumberOfThreads = maxNumberOfThreads;

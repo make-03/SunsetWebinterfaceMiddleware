@@ -33,6 +33,11 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 > The following lists of features is **not final** and certain things may change in the future (finished AND unfinished ones)!
 
 ## List of changes + working features:
+* [23-10-2019] added configuration class for redirecting HTTP traffic (port 8080) to HTTPS
+* [23-10-2019] added method annotated with @After in ThreadPoolTest to manually stop the ExecutorService
+
+---
+
 * [22-10-2019] added unit test for SunsetThreadPool for testing functionality and exceptions
 * [22-10-2019] adjusted code from SunsetThreadPool to be able to test it more efficiently
 * [22-10-2019] added `assertJ` to pom.xml

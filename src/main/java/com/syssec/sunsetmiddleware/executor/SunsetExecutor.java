@@ -10,7 +10,7 @@ import java.time.Instant;
 
 /**
  * Class for managing the execution of the received code with sunset (via
- * command line).
+ * execution of sunset process using stdin/stdout).
  * 
  * @author Markus R.
  *
@@ -70,20 +70,20 @@ public class SunsetExecutor {
 
 			long elapsedTime = Duration.between(startTime, endTime).toMillis();
 
-			System.out
-					.println("[INFO: Duration of sunset execution: " + elapsedTime + "ms]");
+			System.out.println("[INFO: Duration of sunset execution: " + elapsedTime + "ms]");
 			System.out.println(this.SEP_LINE);
 
 			return result.trim();
 
 		} catch (IOException e) {
+			this.destroyProcess();
 			System.out.println("[ERROR: There was an exception when trying to execute sunset!]");
 			System.out.println(e.getMessage());
 			System.out.println(this.SEP_LINE);
 			return e.getMessage();
 		}
 	}
-	
+
 	public void destroyProcess() {
 		this.process.destroy();
 	}

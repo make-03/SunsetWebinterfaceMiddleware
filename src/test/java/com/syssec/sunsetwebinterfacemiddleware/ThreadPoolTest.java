@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,10 +16,15 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 public class ThreadPoolTest {
 
 	private SunsetThreadPool sunsetThreadPool;
-	
+
 	@Before
 	public void setUp() {
 		this.sunsetThreadPool = new SunsetThreadPool();
+	}
+
+	@After
+	public void tearDown() {
+		this.sunsetThreadPool.shutdownExecutorService();
 	}
 
 	@Test
@@ -71,8 +77,10 @@ public class ThreadPoolTest {
 
 	@Test
 	public void testCodeWithEndlessLoopCausesTimeoutException() {
-		this.sunsetThreadPool.setTimeoutSeconds(1);
+		this.sunsetThreadPool.setTimeoutSeconds(10);
 
+		System.out.println("Testing TimeoutException with a timeout of 10 seconds ...");
+		
 		String code = "program EndlessTest {\n" + "\t while(true) {}\n" + "}";
 		String id = UUID.randomUUID().toString();
 
@@ -82,37 +90,37 @@ public class ThreadPoolTest {
 			this.sunsetThreadPool.getFutureResult(sunsetExecutor, code, id);
 		}).isInstanceOf(TimeoutException.class);
 
-		sunsetExecutor.destroyProcess();
+		sunsetExecutor.destroyProcess(); // process has to be destroyed manually here!
 	}
-	
+
 	@Test
 	public void testIllegalArgumentExceptionIsThrown() {
 		assertThatThrownBy(() -> {
 			this.sunsetThreadPool.setMaxNumberOfThreads(0);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
-		
+
 		assertThatThrownBy(() -> {
 			this.sunsetThreadPool.setMaxNumberOfThreads(-1);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
-		
+
 		assertThatThrownBy(() -> {
 			this.sunsetThreadPool.setTimeoutSeconds(0);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
-		
+
 		assertThatThrownBy(() -> {
 			this.sunsetThreadPool.setTimeoutSeconds(-1);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
-		
+
 		assertThatThrownBy(() -> {
 			SunsetThreadPool customSunsetThreadPool = new SunsetThreadPool(0, 60);
 			customSunsetThreadPool.shutdownExecutorService();
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
-		
+
 		assertThatThrownBy(() -> {
 			SunsetThreadPool customSunsetThreadPool = new SunsetThreadPool(16, 0);
 			customSunsetThreadPool.shutdownExecutorService();
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
-		
+
 		assertThatThrownBy(() -> {
 			SunsetThreadPool customSunsetThreadPool = new SunsetThreadPool(0, 0);
 			customSunsetThreadPool.shutdownExecutorService();
