@@ -76,7 +76,7 @@ FFaplApiSideNav = {
             "<li class='no-padding'>" +
             "<ul class='collapsible collapsible-accordion'>" +
             "<li>" +
-            "<a class='collapsible-header waves-effect waves-teal bold'>Programbeispiele</a>" +
+            "<a class='collapsible-header waves-effect waves-teal bold'>Programmbeispiele</a>" +
             "<div class='collapsible-body'><ul class='exProgramContainer'></ul></div>" +
             "</li>" +
             "</ul>" +

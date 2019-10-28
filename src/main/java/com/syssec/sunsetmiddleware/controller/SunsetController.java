@@ -50,7 +50,7 @@ public class SunsetController {
 	 * @throws InterruptedException
 	 */
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
-	public ModelAndView getCode(@RequestParam("code") String code, @RequestParam("uniqueId") String id)
+	public ModelAndView executeCode(@RequestParam("code") String code, @RequestParam("uniqueId") String id)
 			throws InterruptedException, ExecutionException, TimeoutException {
 		System.out.println("[INFO: User-ID for this request: " + id + "]");
 
