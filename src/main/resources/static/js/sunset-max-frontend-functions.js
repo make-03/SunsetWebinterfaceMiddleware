@@ -4,15 +4,13 @@ var consoles = $('#consoles');
 var inputConsole = document.getElementById('inputTextArea');
 var outputConsole = $('#outputTextArea');
 
-// added 02.04.2019
-document.getElementById("sendBtn").disabled = false;
-document.getElementById("stopBtn").disabled = true;
-// added 15.04.2019
-document.getElementById("undoBtn").disabled = false;
-document.getElementById("redoBtn").disabled = false;
-document.getElementById("uploadBtn").disabled = false;
-document.getElementById("saveBtn").disabled = false;
-document.getElementById("printBtn").disabled = false;
+document.getElementById("btnSend").disabled = false;
+document.getElementById("btnStop").disabled = true;
+document.getElementById("btnUndo").disabled = false;
+document.getElementById("btnRedo").disabled = false;
+document.getElementById("btnUpload").disabled = false;
+document.getElementById("btnSave").disabled = false;
+document.getElementById("btnPrint").disabled = false;
 
 $(document)
 		.ready(
@@ -97,14 +95,6 @@ $(document)
 						 * Drag n' Drop is already implemented in CodeMirror
 						 * Editor!!!
 						 */
-
-						/*
-						 * REMOVED 03.04.2019 Set default value of the
-						 * codeMirror editor
-						 */
-						// codeMirrorEditor.getDoc().setValue('program calculate
-						// {\n\tprintln("Hello World!");\n}');
-						// codeMirrorEditor.getDoc().setValue('');
 					}
 
 					FFaplApiSideNav.init(false);
@@ -125,7 +115,7 @@ $(document)
 					});
 					$('main .modal-trigger').leanModal();
 
-					// ADDED 03.04.2019 - Scroll to bottom of output text field
+					// Scroll to bottom of output text field
 					outputConsole.scrollTop(outputConsole[0].scrollHeight);
 					var objDiv = document.getElementById("output-console");
 					objDiv.scrollTop = objDiv.scrollHeight;
@@ -133,11 +123,11 @@ $(document)
 					// focus cursor inside input textarea
 					// document.getElementById('inputTextArea').focus();
 
-					// ADDED 16.04.2019 - generate random ID for user (does not
+					// generate random ID for user (does not
 					// need to be an UUID!)
 					var uniqueId = Math.random().toString(36).substring(2, 15)
 							+ Math.random().toString(36).substring(2, 15);
-					console.log("GENERATED ID: " + uniqueId); // logging ID
+					console.log("Generated ID: " + uniqueId); // logging ID
 																// for testing!
 					document.getElementById("uniqueId").innerHTML = uniqueId; // used
 																				// for
@@ -151,77 +141,52 @@ $(document)
 					console.log('Page successfully initialized!');
 				});
 
+function validateForm() {
+	var code = codeMirrorEditor.getValue();
+	if (!code.length > 0) {
+		alert("Please enter some code before executing.");
+	    return false;
+	}
+}
+
 // Button-functions for function panel
 {
 	function onBtnExecute() {
-		// added 02.04.2019
 		console.log('Clicked execution button!');
-		document.getElementById("sendBtn").disabled = true;
-		document.getElementById("stopBtn").disabled = false;
-		// added 15.04.2019
-		document.getElementById("undoBtn").disabled = true;
-		document.getElementById("redoBtn").disabled = true;
-		document.getElementById("uploadBtn").disabled = true;
-		document.getElementById("saveBtn").disabled = true;
-		document.getElementById("printBtn").disabled = true;
-
+		
 		var code = codeMirrorEditor.getValue();
+		
+		if (!code.length > 0) {
+			console.log('No code entered! Cannot execute empty code!');
+			return;
+		}
+		
+		document.getElementById("btnSend").disabled = true;
+		document.getElementById("btnStop").disabled = false;
+		document.getElementById("btnUndo").disabled = true;
+		document.getElementById("btnRedo").disabled = true;
+		document.getElementById("btnUpload").disabled = true;
+		document.getElementById("btnSave").disabled = true;
+		document.getElementById("btnPrint").disabled = true;
+
 		code = code.replace(/(\r\n|\n|\r)/g, "\n");
 		if (code.length > 0) {
-
 			var hash = calcMD5(code);
-			// added 03.04.2019
-			console.log('MD5 Hash of Code: ' + hash); // might be used later
-			// processCode(code, function(data){processCodeSucceeded(data)},
-			// function(data){processCodeFailed(data)});
+			console.log('MD5 Hash of Code: ' + hash);
 		}
 	}
 
-	/*
-	 * DEPRECATED
-	 * 03.04.2019 //Represent the solution of the transmitted Code!!! function
-	 * processCodeSucceeded(data){ if(data){ data = htmlEntities(data);
-	 * if(outputConsole.html()){ outputConsole.append("<div class='divider'></div>") }
-	 * outputConsole.append((new Date()).toLocaleTimeString());
-	 * outputConsole.append("<pre style='padding-left:20px; line-height:20px'>" +
-	 * data + "</pre>"); // Scroll to bottom var objDiv =
-	 * document.getElementById("output-console"); objDiv.scrollTop =
-	 * objDiv.scrollHeight; document.getElementById("exeButton").disabled =
-	 * false; } } function processCodeFailed(data){ if(outputConsole.html()){
-	 * outputConsole.append("<br>") } outputConsole.append("An error occured:
-	 * <br>" + data); }
-	 */
-
 	function onBtnStopExecution() {
-		/*
-		 * killProgram( function(data){ terminateProcessCallback(data); },
-		 * function(data){ terminateProcessCallback(data); } );
-		 */
-
-		// added 02.04.2019
 		console.log('Clicked cancel button!');
-		document.getElementById("sendBtn").disabled = false;
-		document.getElementById("stopBtn").disabled = true;
-		// added 15.04.2019
-		document.getElementById("undoBtn").disabled = false;
-		document.getElementById("redoBtn").disabled = false;
-		document.getElementById("uploadBtn").disabled = false;
-		document.getElementById("saveBtn").disabled = false;
-		document.getElementById("printBtn").disabled = false;
+		document.getElementById("btnSend").disabled = false;
+		document.getElementById("btnStop").disabled = true;
+		document.getElementById("btnUndo").disabled = false;
+		document.getElementById("btnRedo").disabled = false;
+		document.getElementById("btnUpload").disabled = false;
+		document.getElementById("btnSave").disabled = false;
+		document.getElementById("btnPrint").disabled = false;
 	}
 
-	/*
-	 * DEPRECATED
-	 * 03.04.2019 function terminateProcessCallback(data){ if(data){ data =
-	 * htmlEntities(data); if(outputConsole.html()){ outputConsole.append("<div
-	 * class='divider'></div>") } outputConsole.append((new
-	 * Date()).toLocaleTimeString()); outputConsole.append("<pre style='padding-left:20px; line-height:20px'>" +
-	 * data + "</pre>"); // Scroll to bottom var objDiv =
-	 * document.getElementById("output-console"); objDiv.scrollTop =
-	 * objDiv.scrollHeight; } }
-	 */
-
-	/* 03.04.2019 - these functions (undo+redo) currently do not work properly */
 	function undo() {
 		console.log('Clicked undo button!');
 		codeMirrorEditor.execCommand('undo', true, null);
@@ -235,19 +200,17 @@ $(document)
 	 * Fetches the text of the CodeMirror and creates a file to store the code
 	 * on local devices
 	 */
-	// UPDATED 03.04.2019
 	function save() {
 		console.log('Clicked the save button!');
 
-		var textToWrite = codeMirrorEditor.getValue();
+		var code = codeMirrorEditor.getValue();
 
-		if (!textToWrite.length > 0) {
+		if (!code.length > 0) {
 			console.log('No code entered! Cannot save empty file!');
 			alert("Please write something before saving.");
 			return;
 		}
 
-		// UPDATED 04.04.2019
 		var date = new Date();
 		/* code for dd_mm_yyyy format (day of the year) */
 		var dd = date.getDate();
@@ -277,12 +240,12 @@ $(document)
 		document.body.appendChild(a);
 		a.style = "display: none";
 
-		blob = new Blob([ textToWrite ], {
+		blob = new Blob([ code ], {
 			type : "plain/text;charset=utf-8"
 		}), url = window.URL.createObjectURL(blob);
 
 		console.group("Object URL");
-		console.log("Text:", textToWrite);
+		console.log("Text:", code);
 		console.log("URL:", url);
 		console.groupEnd();
 
@@ -293,40 +256,22 @@ $(document)
 
 		a.click();
 		window.URL.revokeObjectURL(url);
-
-		/*
-		 * DEPRECATED - 03.04.2019
-		 * var downloadLink = document.createElement("a"); downloadLink.download =
-		 * fileNameToSaveAs; downloadLink.innerHTML = "Download File"; if
-		 * (window.URL != null) { // Chrome allows the link to be clicked //
-		 * without actually adding it to the DOM. downloadLink.href =
-		 * window.URL.createObjectURL(textFileAsBlob); } else { // Firefox
-		 * requires the link to be added to the DOM // before it can be clicked.
-		 * downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
-		 * //downloadLink.onclick = destroyClickedElement();
-		 * downloadLink.style.display = "none";
-		 * document.body.appendChild(downloadLink); } console.log('Created
-		 * download element!'); console.log('[DOWNLOAD LINK]: '+downloadLink);
-		 * 
-		 * downloadLink.click();
-		 */
-
 	}
 
 	/* Fetches the text(innerHTML) of the CodeMirror and prints it */
 	function print() {
 		console.log('Clicked the print button!');
-		var textToWrite = codeMirrorEditor.getValue();
-		if (!textToWrite.length > 0) {
+		var code = codeMirrorEditor.getValue();
+		if (!code.length > 0) {
 			alert("Please write something before printing.");
 			return;
 		}
-
+		
 		var childWindow = window.open('', 'childWindow',
 				'location=yes, menubar=yes, toolbar=yes');
 		childWindow.document.open();
 		childWindow.document.write('<html><head></head><body>');
-		childWindow.document.write(textToWrite.replace(/\n/gi, '<br>'));
+		childWindow.document.write(code.replace(/\n/gi, '<br>').replace(/\t/gi, '&emsp;'));
 		childWindow.document.write('</body></html>');
 		childWindow.print();
 		childWindow.document.close();

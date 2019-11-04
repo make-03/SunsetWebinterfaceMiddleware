@@ -13,7 +13,7 @@ import org.junit.Test;
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 
-public class ThreadPoolTest {
+public class SunsetThreadPoolTests {
 
 	private SunsetThreadPool sunsetThreadPool;
 
@@ -56,12 +56,16 @@ public class ThreadPoolTest {
 
 	@Test
 	public void testHelloWorldCodeReturnsValidResult() throws InterruptedException, ExecutionException {
-		String code = "program HelloWorld {\n" + "\t println(\"test\");\n" + "}";
+		String code = this.getHelloWorldTestCode();
 		String id = UUID.randomUUID().toString();
 
 		String result = this.sunsetThreadPool.runSunsetExecutor(code, id);
 
-		assertThat(result).isNotNull().isNotEmpty().isEqualTo("test");
+		assertThat(result).isNotNull().isNotEmpty().isEqualTo("Hello World");
+	}
+
+	private String getHelloWorldTestCode() {
+		return "program HelloWorld {\n\tprintln(\"Hello World\");\n}";
 	}
 
 	@Test
@@ -75,12 +79,27 @@ public class ThreadPoolTest {
 				.endsWith("decrypted into: 123");
 	}
 
+	private String getStandardElGamalCode() {
+		return "program StandardElGamal{\r\n" + "	const p : Prime := 2063;\r\n"
+				+ "	const g : Integer := 607; //Generator \r\n"
+				+ "	function encrypt(m: Integer; pk: Integer) : Z()[] {\r\n" + "		c: Z(p)[];\r\n"
+				+ "		X: RandomGenerator(1:p-1);\r\n" + "		r: Integer;\r\n" + "		c := new Z()[2];\r\n"
+				+ "		r := X;\r\n" + "		c[0] := g^r;\r\n" + "		c[1] := m * pk^r;\r\n"
+				+ "		return c;\r\n" + "	}\r\n" + "	function decrypt(c: Z()[]; sk: Integer) : Z() {\r\n"
+				+ "		return c[1] * c[0]^(-sk);\r\n" + "	}\r\n" + "	\r\n" + "	X: RandomGenerator(1:(p-1));\r\n"
+				+ "	z: Integer;\r\n" + "	h: Integer;\r\n" + "	message: Integer;\r\n" + "	ciphertext: Z(p)[];\r\n"
+				+ "	message := 123;\r\n" + "	z := X;\r\n" + "	h := g^z;\r\n"
+				+ "	ciphertext := encrypt(message,h);\r\n" + "	println(\"message: \" + message);\r\n"
+				+ "	println(\"ciphertext: \" + ciphertext);\r\n"
+				+ "	println(\"decrypted into: \" + str(decrypt(ciphertext,z)));\r\n" + "}";
+	}
+
 	@Test
 	public void testCodeWithEndlessLoopCausesTimeoutException() {
-		this.sunsetThreadPool.setTimeoutSeconds(10);
+		this.sunsetThreadPool.setThreadPoolProperties(10, 8);
 
 		System.out.println("Testing TimeoutException with a timeout of 10 seconds ...");
-		
+
 		String code = "program EndlessTest {\n" + "\t while(true) {}\n" + "}";
 		String id = UUID.randomUUID().toString();
 
@@ -90,25 +109,29 @@ public class ThreadPoolTest {
 			this.sunsetThreadPool.getFutureResult(sunsetExecutor, code, id);
 		}).isInstanceOf(TimeoutException.class);
 
-		sunsetExecutor.destroyProcess(); // process has to be destroyed manually here!
+		sunsetExecutor.destroyProcess(); // process has to be manually destroyed here!
 	}
 
 	@Test
 	public void testIllegalArgumentExceptionIsThrown() {
 		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setMaxNumberOfThreads(0);
+			this.sunsetThreadPool.setThreadPoolProperties(5, 0);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
 
 		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setMaxNumberOfThreads(-1);
+			this.sunsetThreadPool.setThreadPoolProperties(5, -1);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
 
 		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setTimeoutSeconds(0);
+			this.sunsetThreadPool.setThreadPoolProperties(0, 8);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
 
 		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setTimeoutSeconds(-1);
+			this.sunsetThreadPool.setThreadPoolProperties(0, 0);
+		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
+
+		assertThatThrownBy(() -> {
+			this.sunsetThreadPool.setThreadPoolProperties(-1, 8);
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
 
 		assertThatThrownBy(() -> {
@@ -125,21 +148,6 @@ public class ThreadPoolTest {
 			SunsetThreadPool customSunsetThreadPool = new SunsetThreadPool(0, 0);
 			customSunsetThreadPool.shutdownExecutorService();
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
-	}
-
-	private String getStandardElGamalCode() {
-		return "program StandardElGamal{\r\n" + "	const p : Prime := 2063;\r\n"
-				+ "	const g : Integer := 607; //Generator \r\n"
-				+ "	function encrypt(m: Integer; pk: Integer) : Z()[] {\r\n" + "		c: Z(p)[];\r\n"
-				+ "		X: RandomGenerator(1:p-1);\r\n" + "		r: Integer;\r\n" + "		c := new Z()[2];\r\n"
-				+ "		r := X;\r\n" + "		c[0] := g^r;\r\n" + "		c[1] := m * pk^r;\r\n"
-				+ "		return c;\r\n" + "	}\r\n" + "	function decrypt(c: Z()[]; sk: Integer) : Z() {\r\n"
-				+ "		return c[1] * c[0]^(-sk);\r\n" + "	}\r\n" + "	\r\n" + "	X: RandomGenerator(1:(p-1));\r\n"
-				+ "	z: Integer;\r\n" + "	h: Integer;\r\n" + "	message: Integer;\r\n" + "	ciphertext: Z(p)[];\r\n"
-				+ "	message := 123;\r\n" + "	z := X;\r\n" + "	h := g^z;\r\n"
-				+ "	ciphertext := encrypt(message,h);\r\n" + "	println(\"message: \" + message);\r\n"
-				+ "	println(\"ciphertext: \" + ciphertext);\r\n"
-				+ "	println(\"decrypted into: \" + str(decrypt(ciphertext,z)));\r\n" + "}";
 	}
 
 }
