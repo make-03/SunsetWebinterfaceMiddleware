@@ -271,7 +271,7 @@ function validateForm() {
 				'location=yes, menubar=yes, toolbar=yes');
 		childWindow.document.open();
 		childWindow.document.write('<html><head></head><body>');
-		childWindow.document.write(code.replace(/\n/gi, '<br>').replace(/\t/gi, '&emsp;'));
+		childWindow.document.write(code.replace(/\n/gi, '<br>').replace(/\t/gi, '&emsp;&emsp;'));
 		childWindow.document.write('</body></html>');
 		childWindow.print();
 		childWindow.document.close();

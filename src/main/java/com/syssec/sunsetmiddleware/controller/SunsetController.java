@@ -24,12 +24,12 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 @Controller
 public class SunsetController {
 	
-	private SunsetThreadPool threadPool;
+	private SunsetThreadPool sunsetThreadPool;
 
 	private Map<String, String> idToCode = new ConcurrentHashMap<>();
 
 	public SunsetController() {
-		this.threadPool = new SunsetThreadPool();
+		this.sunsetThreadPool = new SunsetThreadPool();
 		System.out.println("[INFO: Sunset Controller successfully loaded!]");
 	}
 
@@ -60,7 +60,7 @@ public class SunsetController {
 
 		System.out.println("[INFO {ID = " + id + "}: Code received!]\n" + code);
 
-		String result = threadPool.runSunsetExecutor(code, id);
+		String result = this.sunsetThreadPool.runSunsetExecutor(code, id);
 
 		System.out.println("[INFO {ID = " + id + "}: Result of sunset execution:]\n" + result);
 
@@ -82,10 +82,10 @@ public class SunsetController {
 	 * @return modelAndView that contains name of template and additional objects
 	 */
 	@RequestMapping(value = { "/cancelled" }, method = RequestMethod.POST)
-	public ModelAndView stopExecution(@RequestParam("uniqueId2") String id) {
+	public ModelAndView cancelExecution(@RequestParam("uniqueId2") String id) {
 		// TODO: error when passing parameter code for stopExecution ->
 		// workaround, map data structure which stores code for each unique user (id)
-		boolean wasCancelled = this.threadPool.cancelExecutionOfSpecificThread(id);
+		boolean wasCancelled = this.sunsetThreadPool.cancelExecutionOfSpecificThread(id);
 
 		if (wasCancelled) {
 			System.out.println("Thread successfully cancelled!");
@@ -104,6 +104,10 @@ public class SunsetController {
 		this.idToCode.remove(id);
 
 		return modelAndView;
+	}
+	
+	public SunsetThreadPool getSunsetThreadPool() {
+		return this.sunsetThreadPool;
 	}
 
 }

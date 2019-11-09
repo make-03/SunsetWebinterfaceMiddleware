@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.UUID;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +43,11 @@ public class SunsetControllerTests {
 		this.id = UUID.randomUUID().toString();
 	}
 
+	@After
+	public void tearDown() {
+		this.sunsetController.getSunsetThreadPool().shutdownExecutorService();
+	}
+
 	@Test
 	public void testIllegalArgumentExceptionIsThrown() {
 		assertThatThrownBy(() -> {
@@ -62,17 +69,17 @@ public class SunsetControllerTests {
 	}
 
 	@Test
-	public void testHttpPostRequestWithValidButSyntacticallyIncorrectCodeParameterReturnsFFaplParseException()
+	public void testHttpPostRequestWithValidButSyntacticallyIncorrectCodeParameterReturnsFFaplParseExceptionString()
 			throws Exception {
 		String code = "testCode";
 		MvcResult result = this.mvc.perform(post("/result").param("code", code).param("uniqueId", this.id)).andReturn();
 		String codeAfterRequest = result.getModelAndView().getModelMap().get("codeOriginal").toString();
 		String resultString = result.getModelAndView().getModelMap().get("codeResult").toString();
 
-		assertThat(codeAfterRequest).isNotNull().isNotEmpty().isEqualTo("testCode");
+		assertThat(codeAfterRequest).isNotNull().isNotEmpty().isEqualTo(code);
 		assertThat(resultString).isNotNull().isNotEmpty()
-				.isEqualTo("FFapl Kompilierung: [] ParseException 102 (Zeile 1, Spalte 1)"
-						+ "\n \"testCode\" erkannt in Zeile 1, Spalte 1. Erwartete jedoch: \"program\" ...");
+				.isEqualTo("FFapl Kompilierung: [] ParseException 102 (Zeile 1, Spalte 1)" + "\n \"" + code
+						+ "\" erkannt in Zeile 1, Spalte 1. Erwartete jedoch: \"program\" ...");
 	}
 
 	@Test
@@ -90,25 +97,44 @@ public class SunsetControllerTests {
 	private String getHelloWorldTestCode() {
 		return "program HelloWorld {\n\tprintln(\"Hello World\");\n}";
 	}
+	
+	@Test
+	public void testHttpOptionsRequestIsAllowed() throws Exception {
+		this.mvc.perform(options("/result")).andExpect(status().isOk());
+		this.mvc.perform(options("/cancelled")).andExpect(status().isOk());
+	}
+
+	@Test
+	public void testHttpOptionsRequestReturnsAllowHeaderWithOnlyPost() throws Exception {
+		MvcResult mvcResult = this.mvc.perform(options("/result")).andReturn();
+		assertThat(mvcResult.getResponse().getHeader("Allow")).isEqualTo("POST");
+		
+		MvcResult mvcCancelled = this.mvc.perform(options("/cancelled")).andReturn();
+		assertThat(mvcCancelled.getResponse().getHeader("Allow")).isEqualTo("POST");
+	}
 
 	@Test
 	public void testHttpHeadRequestIsNotAllowed() throws Exception {
 		this.mvc.perform(head("/result")).andExpect(status().isMethodNotAllowed());
+		this.mvc.perform(head("/cancelled")).andExpect(status().isMethodNotAllowed());
 	}
 
 	@Test
 	public void testHttpGetRequestIsNotAllowed() throws Exception {
 		this.mvc.perform(get("/result")).andExpect(status().isMethodNotAllowed());
+		this.mvc.perform(get("/cancelled")).andExpect(status().isMethodNotAllowed());
 	}
 
 	@Test
 	public void testHttpPutRequestIsNotAllowed() throws Exception {
 		this.mvc.perform(put("/result")).andExpect(status().isMethodNotAllowed());
+		this.mvc.perform(put("/cancelled")).andExpect(status().isMethodNotAllowed());
 	}
 
 	@Test
 	public void testHttpDeleteRequestIsNotAllowed() throws Exception {
 		this.mvc.perform(delete("/result")).andExpect(status().isMethodNotAllowed());
+		this.mvc.perform(delete("/cancelled")).andExpect(status().isMethodNotAllowed());
 	}
-
+	
 }

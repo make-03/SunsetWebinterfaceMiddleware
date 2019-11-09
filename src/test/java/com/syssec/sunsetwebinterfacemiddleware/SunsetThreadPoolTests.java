@@ -12,14 +12,17 @@ import org.junit.Test;
 
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
+import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
 
 public class SunsetThreadPoolTests {
 
 	private SunsetThreadPool sunsetThreadPool;
+	private String id;
 
 	@Before
 	public void setUp() {
 		this.sunsetThreadPool = new SunsetThreadPool();
+		this.id = UUID.randomUUID().toString();
 	}
 
 	@After
@@ -29,37 +32,36 @@ public class SunsetThreadPoolTests {
 
 	@Test
 	public void testSunsetThreadPoolWithDefaultConstructor() {
-		assertThat(this.sunsetThreadPool.getMaxNumberOfThreads()).isNotNull().isNotNegative().isEqualTo(8);
-		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative().isEqualTo(5);
+		assertThat(this.sunsetThreadPool.getCorePoolSize()).isNotNull().isNotNegative()
+				.isEqualTo(SunsetThreadPoolConfiguration.getCorePoolSize());
+		assertThat(this.sunsetThreadPool.getMaxPoolSize()).isNotNull().isNotNegative()
+				.isEqualTo(SunsetThreadPoolConfiguration.getMaxPoolSize());
+		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative()
+				.isEqualTo(SunsetThreadPoolConfiguration.getKeepAliveSeconds());
+		assertThat(this.sunsetThreadPool.getQueueCapacity()).isNotNull().isNotNegative()
+				.isEqualTo(SunsetThreadPoolConfiguration.getQueueCapacity());
 
 		this.sunsetThreadPool.shutdownExecutorService();
 
-		assertThat(this.sunsetThreadPool.getExecutorService().isShutdown()).isTrue();
-		assertThat(this.sunsetThreadPool.getExecutorService().isTerminated()).isTrue();
+		assertThat(this.sunsetThreadPool.getThreadPoolTaskExecutor().getActiveCount()).isEqualTo(0);
 	}
 
 	@Test
-	public void testSunsetThreadPoolWithUserDefinedConstructor() {
-		int maxNumberOfThreads = 16;
-		int timeoutSeconds = 60;
+	public void testSetKeepAliveSecondsThrowsIllegalArgumentException() {
+		assertThatThrownBy(() -> {
+			SunsetThreadPoolConfiguration.setKeepAliveSeconds(0);
+		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Value for keepAliveSeconds must be >0");
 
-		SunsetThreadPool sunsetThreadPoolCustomConstructor = new SunsetThreadPool(maxNumberOfThreads, timeoutSeconds);
-
-		assertThat(sunsetThreadPoolCustomConstructor.getMaxNumberOfThreads()).isNotNull().isNotNegative().isEqualTo(16);
-		assertThat(sunsetThreadPoolCustomConstructor.getTimeoutSeconds()).isNotNull().isNotNegative().isEqualTo(60);
-
-		sunsetThreadPoolCustomConstructor.shutdownExecutorService();
-
-		assertThat(sunsetThreadPoolCustomConstructor.getExecutorService().isShutdown()).isTrue();
-		assertThat(sunsetThreadPoolCustomConstructor.getExecutorService().isTerminated()).isTrue();
+		assertThatThrownBy(() -> {
+			SunsetThreadPoolConfiguration.setKeepAliveSeconds(-1);
+		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Value for keepAliveSeconds must be >0");
 	}
 
 	@Test
 	public void testHelloWorldCodeReturnsValidResult() throws InterruptedException, ExecutionException {
 		String code = this.getHelloWorldTestCode();
-		String id = UUID.randomUUID().toString();
 
-		String result = this.sunsetThreadPool.runSunsetExecutor(code, id);
+		String result = this.sunsetThreadPool.runSunsetExecutor(code, this.id);
 
 		assertThat(result).isNotNull().isNotEmpty().isEqualTo("Hello World");
 	}
@@ -70,16 +72,15 @@ public class SunsetThreadPoolTests {
 
 	@Test
 	public void testStandardElGamalCodeReturnsValidResult() throws InterruptedException, ExecutionException {
-		String codeStandardElGamal = this.getStandardElGamalCode();
-		String idRSA = UUID.randomUUID().toString();
+		String codeStandardElGamal = this.getStandardElGamalTestCode();
 
-		String result = this.sunsetThreadPool.runSunsetExecutor(codeStandardElGamal, idRSA);
+		String result = this.sunsetThreadPool.runSunsetExecutor(codeStandardElGamal, this.id);
 
 		assertThat(result).isNotNull().isNotEmpty().startsWith("message: 123\n\nciphertext: {")
 				.endsWith("decrypted into: 123");
 	}
 
-	private String getStandardElGamalCode() {
+	private String getStandardElGamalTestCode() {
 		return "program StandardElGamal{\r\n" + "	const p : Prime := 2063;\r\n"
 				+ "	const g : Integer := 607; //Generator \r\n"
 				+ "	function encrypt(m: Integer; pk: Integer) : Z()[] {\r\n" + "		c: Z(p)[];\r\n"
@@ -96,58 +97,56 @@ public class SunsetThreadPoolTests {
 
 	@Test
 	public void testCodeWithEndlessLoopCausesTimeoutException() {
-		this.sunsetThreadPool.setThreadPoolProperties(10, 8);
-
-		System.out.println("Testing TimeoutException with a timeout of 10 seconds ...");
+		System.out.println("Testing TimeoutException with a timeout of 5 seconds ... ");
+		int test_timeout_seconds = 5;
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(test_timeout_seconds);
+		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative()
+				.isEqualTo(test_timeout_seconds);
 
 		String code = "program EndlessTest {\n" + "\t while(true) {}\n" + "}";
-		String id = UUID.randomUUID().toString();
 
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
 
 		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.getFutureResult(sunsetExecutor, code, id);
+			this.sunsetThreadPool.getFutureResult(sunsetExecutor, code, this.id);
 		}).isInstanceOf(TimeoutException.class);
+
+		this.sunsetThreadPool.getThreadPoolTaskExecutor()
+				.setKeepAliveSeconds(SunsetThreadPoolConfiguration.getKeepAliveSecondsDefaultValue());
+		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative()
+				.isEqualTo(SunsetThreadPoolConfiguration.getKeepAliveSecondsDefaultValue());
 
 		sunsetExecutor.destroyProcess(); // process has to be manually destroyed here!
 	}
 
 	@Test
-	public void testIllegalArgumentExceptionIsThrown() {
-		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setThreadPoolProperties(5, 0);
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
+	public void testTaskCountIsCorrectAfterSuccessfullExecution() throws InterruptedException, ExecutionException {
+		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
+		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 
-		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setThreadPoolProperties(5, -1);
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
+		this.sunsetThreadPool.runSunsetExecutor("test", this.id);
 
-		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setThreadPoolProperties(0, 8);
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
+		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
+		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
+	}
 
-		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setThreadPoolProperties(0, 0);
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
+	@Test
+	public void testTaskCountIsCorrectAfterTimeout() throws InterruptedException, ExecutionException {
+		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
+		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 
-		assertThatThrownBy(() -> {
-			this.sunsetThreadPool.setThreadPoolProperties(-1, 8);
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
+		int test_timeout_seconds = 5;
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(test_timeout_seconds);
 
-		assertThatThrownBy(() -> {
-			SunsetThreadPool customSunsetThreadPool = new SunsetThreadPool(0, 60);
-			customSunsetThreadPool.shutdownExecutorService();
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
+		String code = "program EndlessTest {\n" + "\t while(true) {}\n" + "}";
 
-		assertThatThrownBy(() -> {
-			SunsetThreadPool customSunsetThreadPool = new SunsetThreadPool(16, 0);
-			customSunsetThreadPool.shutdownExecutorService();
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Timeout in seconds must be >0!");
+		this.sunsetThreadPool.runSunsetExecutor(code, this.id);
 
-		assertThatThrownBy(() -> {
-			SunsetThreadPool customSunsetThreadPool = new SunsetThreadPool(0, 0);
-			customSunsetThreadPool.shutdownExecutorService();
-		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching("Maximum number of threads must be >0!");
+		this.sunsetThreadPool.getThreadPoolTaskExecutor()
+				.setKeepAliveSeconds(SunsetThreadPoolConfiguration.getKeepAliveSecondsDefaultValue());
+
+		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
+		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 	}
 
 }

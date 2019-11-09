@@ -1,13 +1,14 @@
 package com.syssec.sunsetmiddleware.threadpool;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
 
@@ -22,46 +23,21 @@ import javafx.util.Pair;
  *
  */
 public class SunsetThreadPool {
-
-	private static final int DEFAULT_NUMBER_OF_THREADS = 8;
-
-	private int maxNumberOfThreads = SunsetThreadPool.DEFAULT_NUMBER_OF_THREADS;
-	private int defaultTimeoutSeconds = 5;
-
+	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	private Map<String, Pair<Future<String>, SunsetExecutor>> idToFuture = new ConcurrentHashMap<>();
-
-	/**
-	 * Service to manage all the threads running. For this program a fixed thread
-	 * pool is used to limit the maximum number of concurrent calculations being
-	 * performed.
-	 */
-	private ExecutorService executorService;
-
+	
 	public SunsetThreadPool() {
-		this.executorService = Executors.newFixedThreadPool(SunsetThreadPool.DEFAULT_NUMBER_OF_THREADS);
-	}
-
-	public SunsetThreadPool(int max_threads, int timeout_seconds) {
-		if (max_threads <= 0) {
-			throw new IllegalArgumentException("Maximum number of threads must be >0!");
-		}
-		if (timeout_seconds <= 0) {
-			throw new IllegalArgumentException("Timeout in seconds must be >0!");
-		}
-
-		this.maxNumberOfThreads = max_threads;
-		this.executorService = Executors.newFixedThreadPool(this.maxNumberOfThreads);
-		this.defaultTimeoutSeconds = timeout_seconds;
+		this.threadPoolTaskExecutor = SunsetThreadPoolConfiguration.getThreadPoolTaskExecutor();
 	}
 
 	public String runSunsetExecutor(String code, String id) throws InterruptedException, ExecutionException {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
-
+		
 		String result;
 		try {
 			result = this.getFutureResult(sunsetExecutor, code, id);
 		} catch (TimeoutException e) {
-			result = "Timeout occurred after " + this.defaultTimeoutSeconds + " seconds!";
+			result = "Timeout occurred after " + SunsetThreadPoolConfiguration.getKeepAliveSeconds() + " seconds!";
 			sunsetExecutor.destroyProcess();
 			e.printStackTrace();
 		}
@@ -73,7 +49,7 @@ public class SunsetThreadPool {
 
 	public String getFutureResult(SunsetExecutor sunsetExecutor, String code, String id)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		Future<String> future = executorService.submit(() -> {
+		Future<String> future = this.threadPoolTaskExecutor.submit(() -> {
 			try {
 				return sunsetExecutor.executeCommand(code);
 			} catch (Exception e) {
@@ -85,7 +61,7 @@ public class SunsetThreadPool {
 
 		this.idToFuture.put(id, new Pair<Future<String>, SunsetExecutor>(future, sunsetExecutor));
 
-		return future.get(this.defaultTimeoutSeconds, TimeUnit.SECONDS);
+		return future.get(SunsetThreadPoolConfiguration.getKeepAliveSeconds(), TimeUnit.SECONDS);
 	}
 
 	public boolean cancelExecutionOfSpecificThread(String id) {
@@ -100,30 +76,47 @@ public class SunsetThreadPool {
 	}
 
 	public void shutdownExecutorService() {
-		this.executorService.shutdown();
+		this.threadPoolTaskExecutor.shutdown();
 	}
 
-	public ExecutorService getExecutorService() {
-		return this.executorService;
+	public ThreadPoolTaskExecutor getThreadPoolTaskExecutor() {
+		return this.threadPoolTaskExecutor;
 	}
-
+	
+	public int getCorePoolSize() {
+		return this.threadPoolTaskExecutor.getCorePoolSize();
+	}
+	
+	public int getMaxPoolSize() {
+		return this.threadPoolTaskExecutor.getMaxPoolSize();
+	}
+	
 	public int getTimeoutSeconds() {
-		return this.defaultTimeoutSeconds;
+		return this.threadPoolTaskExecutor.getKeepAliveSeconds();
 	}
-
-	public int getMaxNumberOfThreads() {
-		return this.maxNumberOfThreads;
+	
+	public int getQueueCapacity() {
+		return SunsetThreadPoolConfiguration.getQueueCapacity();
 	}
-
-	public void setThreadPoolProperties(int timeoutSeconds, int maxNumberOfThreads) {
-		if (maxNumberOfThreads <= 0) {
-			throw new IllegalArgumentException("Maximum number of threads must be >0!");
-		}
-		if (timeoutSeconds <= 0) {
-			throw new IllegalArgumentException("Timeout in seconds must be >0!");
-		}
-		this.defaultTimeoutSeconds = timeoutSeconds;
-		this.maxNumberOfThreads = maxNumberOfThreads;
+	
+	public int getActiveCount() {
+		return this.threadPoolTaskExecutor.getActiveCount();
+	}
+	
+	public int getPoolSize() {
+		return this.threadPoolTaskExecutor.getPoolSize();
+	}
+	
+	public BlockingQueue<Runnable> getQueue() {
+		return this.threadPoolTaskExecutor.getThreadPoolExecutor().getQueue();
+	}
+	
+	public long getTaskCount() {
+		return this.threadPoolTaskExecutor.getThreadPoolExecutor().getTaskCount();
+	}
+	
+	public long getCompletedTaskCount() {
+		return this.threadPoolTaskExecutor.getThreadPoolExecutor().getCompletedTaskCount();
 	}
 
 }

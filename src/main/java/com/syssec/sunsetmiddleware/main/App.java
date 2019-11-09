@@ -15,8 +15,6 @@ import static org.springframework.boot.SpringApplication.*;
  */
 @ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.controller.SunsetController.class)
 @ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.controller.CustomErrorController.class)
-@ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.executor.SunsetExecutor.class)
-@ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool.class)
 @ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.configuration.SunsetHttpsConfiguration.class)
 @SpringBootApplication
 public class App {

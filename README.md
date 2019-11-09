@@ -33,8 +33,29 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 > The following lists of features is **not final** and certain things may change in the future (finished AND unfinished ones)!
 
 ## List of changes + working features:
+
+* [09-11-2019] added separate class `SunsetThreadPoolConfiguration?` for setting up the ThreadPool
+* [09-11-2019] updated `SunsetThreadPool` class with these changes, removed local variables in this class
+* [09-11-2019] added methods for getting infos about the current queue, running threads etc.
+* [09-11-2019] updated `SunsetThreadPoolTests` accordingly
+* [09-11-2019] updated `SunsetControllerTests`
+* [09-11-2019] updated README
+
+---
+
+* [04-11-2019] added test class for testing controller using mockups
+* [04-11-2019] it is now possible to test HTTP-requests checking HTTP status codes + values returned by the controller
+* [04-11-2019] removed unnecessary comments and improved code structure
+* [04-11-2019] removed old files + dead code
+* [04-11-2019] improved HTML+javscript code
+* [04-11-2019] indentations are now correctly generated when trying to print code in web interface
+* [04-11-2019] updated **Impressum** in web interface
+ 
+---
+
 * [23-10-2019] added configuration class for redirecting HTTP traffic (port 8080) to HTTPS
 * [23-10-2019] added method annotated with @After in ThreadPoolTest to manually stop the ExecutorService
+* [23-10-2019] fixed minor spelling errors and improved formatting
 
 ---
 
@@ -64,8 +85,8 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 * [16-04-2019] created custom Error Controller + added error pages (HTML) for `general error`, `error 404` and `error 500`
 * [16-04-2019] wrote basic documentation for java-classes and -methods
-* [16-04-2019] added unique ID generation in javascript for webinterface
-   * every time the webinterface is loaded a unique ID is created for user
+* [16-04-2019] added unique ID generation in javascript for web interface
+   * every time the web interface is loaded a unique ID is created for user
    * ID is sent to controller to identify which user sent which code/request
 * [16-04-2019] updated index.html + sunset-max-frontend-functions.js
 * [16-04-2019] deleted old/unused *.css-, *.js-files
@@ -130,4 +151,4 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-Last edited @ [22.10.2019]
+Last edited @ [09.11.2019]
