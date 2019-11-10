@@ -34,6 +34,16 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ## List of changes + working features:
 
+* [10-11-2019] added code to test abort policy from thread pool when threadpool and queue are full (for Controller and ThreadPool tests!)
+* [10-11-2019] added tests for manually canceling execution via http-request
+* [10-11-2019] small improvements to other parts of the unit-tests
+* [10-11-2019] sunsetexecutor processes now also have an automated timeout, improved code for this class
+* [10-11-2019] added new class containing public messages (`SunsetGlobalMessages`)
+* [10-11-2019] changed code for thread pool configuration
+* [10-11-2019] updated README
+
+---
+
 * [09-11-2019] added separate class `SunsetThreadPoolConfiguration?` for setting up the ThreadPool
 * [09-11-2019] updated `SunsetThreadPool` class with these changes, removed local variables in this class
 * [09-11-2019] added methods for getting infos about the current queue, running threads etc.
@@ -151,4 +161,4 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-Last edited @ [09.11.2019]
+Last edited @ [10.11.2019]

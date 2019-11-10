@@ -5,12 +5,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.springframework.core.task.TaskRejectedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 
 /**
@@ -23,14 +25,14 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
  */
 @Controller
 public class SunsetController {
-	
+
 	private SunsetThreadPool sunsetThreadPool;
 
 	private Map<String, String> idToCode = new ConcurrentHashMap<>();
 
 	public SunsetController() {
 		this.sunsetThreadPool = new SunsetThreadPool();
-		System.out.println("[INFO: Sunset Controller successfully loaded!]");
+		System.out.println("[INFO:] " + SunsetGlobalMessages.CONTROLLER_SUCCESSFULLY_LOADED);
 	}
 
 	/**
@@ -49,20 +51,20 @@ public class SunsetController {
 	 */
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
 	public ModelAndView executeCode(@RequestParam("code") String code, @RequestParam("uniqueId") String id)
-			throws InterruptedException, ExecutionException, TimeoutException {
-		System.out.println("[INFO: User-ID for this request: " + id + "]");
+			throws InterruptedException, ExecutionException, TimeoutException, TaskRejectedException {
+		System.out.println("[INFO:] User-ID for this request: " + id);
 
-		if(code.isEmpty()) {
-			throw new IllegalArgumentException("Empty input code received!");
+		if (code.isEmpty()) {
+			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 		}
 
 		this.idToCode.put(id, code);
 
-		System.out.println("[INFO {ID = " + id + "}: Code received!]\n" + code);
+		System.out.println("[INFO:] {ID = " + id + "}: Code received!\n" + code);
 
 		String result = this.sunsetThreadPool.runSunsetExecutor(code, id);
 
-		System.out.println("[INFO {ID = " + id + "}: Result of sunset execution:]\n" + result);
+		System.out.println("[INFO:] {ID = " + id + "}: Result of sunset execution:\n" + result);
 
 		this.idToCode.remove(id);
 
@@ -88,12 +90,12 @@ public class SunsetController {
 		boolean wasCancelled = this.sunsetThreadPool.cancelExecutionOfSpecificThread(id);
 
 		if (wasCancelled) {
-			System.out.println("Thread successfully cancelled!");
+			System.out.println(SunsetGlobalMessages.THREAD_CANCELLED);
 		} else {
-			System.out.println("Something went wrong when cancelling!");
+			System.out.println(SunsetGlobalMessages.THREAD_CANCELLED_FAILED);
 		}
 
-		System.out.println("[INFO {ID = " + id + "}: Sunset execution was cancelled by the user!]");
+		System.out.println("[INFO:] {ID = " + id + "}: " + SunsetGlobalMessages.EXECUTION_CANCELLED_BY_USER);
 
 		String code = this.idToCode.get(id);
 
@@ -105,7 +107,7 @@ public class SunsetController {
 
 		return modelAndView;
 	}
-	
+
 	public SunsetThreadPool getSunsetThreadPool() {
 		return this.sunsetThreadPool;
 	}

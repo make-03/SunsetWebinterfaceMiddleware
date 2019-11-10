@@ -3,6 +3,8 @@ package com.syssec.sunsetmiddleware.main;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
+
 import static org.springframework.boot.SpringApplication.*;
 
 /**
@@ -20,6 +22,6 @@ import static org.springframework.boot.SpringApplication.*;
 public class App {
 	public static void main(String[] args) {
 		run(App.class, args);
-		System.out.println("[INFO: Sunset Webserver successfully started!]");
+		System.out.println("[INFO:] " + SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
 	}
 }
