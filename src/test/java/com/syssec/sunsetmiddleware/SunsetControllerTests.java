@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfig
 
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,19 +32,21 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { SunsetController.class })
 public class SunsetControllerTests {
+	private final Logger logger = Logger.getLogger(SunsetControllerTests.class);
 	private final int TIMEOUT_SECONDS = 5;
 
 	private SunsetController sunsetController;
-	private String id;
-
 	private MockMvc mockMvc;
+	private String id;
 
 	@Before
 	public void setUp() {
 		this.sunsetController = new SunsetController();
-		sunsetController.getSunsetThreadPool().getThreadPoolTaskExecutor().setKeepAliveSeconds(TIMEOUT_SECONDS);
+		sunsetController.getSunsetThreadPool().getThreadPoolTaskExecutor().setKeepAliveSeconds(this.TIMEOUT_SECONDS);
 		sunsetController.getSunsetThreadPool().getThreadPoolTaskExecutor().initialize();
+
 		this.mockMvc = MockMvcBuilders.standaloneSetup(this.sunsetController).apply(sharedHttpSession()).build();
+
 		this.id = UUID.randomUUID().toString();
 	}
 
@@ -53,14 +56,14 @@ public class SunsetControllerTests {
 	}
 
 	@Test
-	public void testIllegalArgumentExceptionIsThrown() {
+	public void testControllerReceivingEmptyCodeThrowsIllegalArgumentException() {
 		assertThatThrownBy(() -> {
 			this.sunsetController.executeCode("", UUID.randomUUID().toString());
 		}).isInstanceOf(IllegalArgumentException.class).hasMessageMatching(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 	}
 
 	@Test
-	public void testHttpPostRequestWithValidParametersReturnsIsOk() throws Exception {
+	public void testHttpPostRequestWithValidParametersReturnsStatusCodeIsOk() throws Exception {
 		this.mockMvc.perform(post("/result").param("code", "testCode").param("uniqueId", this.id))
 				.andExpect(status().isOk());
 	}
@@ -70,7 +73,7 @@ public class SunsetControllerTests {
 		assertThatThrownBy(() -> {
 			this.mockMvc.perform(post("/result").param("code", "").param("uniqueId", this.id));
 		}).isInstanceOf(NestedServletException.class).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class)
-				.hasMessageContaining("Empty input code received!");
+				.hasMessageContaining(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 	}
 
 	@Test
@@ -105,11 +108,11 @@ public class SunsetControllerTests {
 	}
 
 	@Test
-	public void testHttpPostRequstWithoutParametersIsBadRequest() throws Exception {
+	public void testHttpPostRequstWithoutParametersReturnsStatusCodeBadRequest() throws Exception {
 		this.mockMvc.perform(post("/result")).andExpect(status().isBadRequest());
 		this.mockMvc.perform(post("/cancelled")).andExpect(status().isBadRequest());
 	}
-	
+
 	@Test
 	public void testHttpOptionsRequestIsAllowed() throws Exception {
 		this.mockMvc.perform(options("/result")).andExpect(status().isOk());
@@ -151,6 +154,8 @@ public class SunsetControllerTests {
 
 	@Test
 	public void testTimeoutOfExecutionReturnsCorrectResult() throws Exception {
+		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
+				+ " seconds ...");
 		MvcResult result = this.mockMvc
 				.perform(post("/result").param("code", this.getEndlessLoopTestCode()).param("uniqueId", this.id))
 				.andExpect(status().isOk()).andReturn();
@@ -158,14 +163,14 @@ public class SunsetControllerTests {
 		String resultString = result.getModelAndView().getModelMap().get("codeResult").toString();
 
 		assertThat(codeAfterRequest).isNotNull().isNotEmpty().isEqualTo(this.getEndlessLoopTestCode());
-		assertThat(resultString).isNotNull().isNotEmpty().isEqualTo("Timeout occurred after 5 seconds!");
+		assertThat(resultString).isNotNull().isNotEmpty()
+				.isEqualTo(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION, this.TIMEOUT_SECONDS));
 	}
-
-	private String resultOfCancelledCalculation;
 
 	@Test
 	public void testCancellingRunningExecutionOfCodeIsSuccessfull() throws Exception {
 		this.threadExecuteCodeEndlessLoop.start();
+		Thread.sleep(50);
 		this.threadCancelExecutionOfEndlessLoop.start();
 
 		this.threadExecuteCodeEndlessLoop.join();
@@ -189,10 +194,10 @@ public class SunsetControllerTests {
 		return "program Endless { \n\twhile(true) {}\n}";
 	}
 
+	private String resultOfCancelledCalculation = "";
 	private Thread threadCancelExecutionOfEndlessLoop = new Thread() {
 		public void run() {
 			try {
-				Thread.sleep(250);
 				MvcResult result = mockMvc.perform(post("/cancelled").param("uniqueId2", id)).andReturn();
 				resultOfCancelledCalculation = result.getModelAndView().getModelMap().get("codeResult").toString();
 			} catch (Exception e) {
@@ -258,8 +263,8 @@ public class SunsetControllerTests {
 	private Thread threadExecuteCodeHelloWorld3CausingTaskRejectionException = new Thread() {
 		public void run() {
 			try {
-				MvcResult result = mockMvc.perform(post("/result").param("code", getHelloWorldTestCode()).param("uniqueId",
-						UUID.randomUUID().toString())).andExpect(status().isOk()).andReturn();
+				MvcResult result = mockMvc.perform(post("/result").param("code", getHelloWorldTestCode())
+						.param("uniqueId", UUID.randomUUID().toString())).andExpect(status().isOk()).andReturn();
 				resultThread3 = result.getModelAndView().getModel().get("codeResult").toString();
 			} catch (Exception e) {
 				e.printStackTrace();

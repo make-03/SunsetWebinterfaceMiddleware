@@ -9,6 +9,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.log4j.Logger;
+
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
 
@@ -20,17 +22,19 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
  *
  */
 public class SunsetExecutor {
+	private final Logger logger = Logger.getLogger(SunsetExecutor.class);
+
 	private String sunsetPath = "sunset.jar";
 	private Process process;
 	private int timeoutSeconds;
 
 	public SunsetExecutor() {
-		this.timeoutSeconds = SunsetThreadPoolConfiguration.KEEP_ALIVE_SECONDS_DEFAULT + 10;
+		this.timeoutSeconds = SunsetThreadPoolConfiguration.KEEP_ALIVE_SECONDS_DEFAULT + 5; // TODO: what value?
+		
 		try {
 			this.process = Runtime.getRuntime().exec("java -jar " + sunsetPath + " --cmd");
 		} catch (IOException e) {
-			this.destroyProcess();
-			e.printStackTrace();
+			logger.warn(SunsetGlobalMessages.IO_EXCEPTION);
 		}
 	}
 
@@ -48,15 +52,18 @@ public class SunsetExecutor {
 			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 		}
 
+		logger.debug(SunsetGlobalMessages.SUNSET_EXECUTION_VIA_COMMANDLINE);
+
 		String code = receivedCode;
 		String result = "EMPTY";
 
-		if (!code.endsWith("END"))
+		if (!code.endsWith("END")) {
 			code = code + "\nEND\n";
-
-		System.out.println("[INFO:] " + SunsetGlobalMessages.SUNSET_EXECUTION_VIA_COMMANDLINE);
+		}
 
 		try {
+			// TODO: create private method for this part of the code (better structure!)
+			
 			Instant startTime = Instant.now();
 
 			long timeoutMilliseconds = this.timeoutSeconds * 1000;
@@ -71,7 +78,9 @@ public class SunsetExecutor {
 			while (this.isAlive(process)) {
 				if (System.currentTimeMillis() > timoutTime) {
 					this.destroyProcess();
-					throw new TimeoutException("Timeout occurred after " + this.timeoutSeconds + " seconds!");
+					logger.warn(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION, this.timeoutSeconds));
+					throw new TimeoutException(
+							String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION, this.timeoutSeconds));
 				}
 			}
 
@@ -81,15 +90,17 @@ public class SunsetExecutor {
 			while ((line = in.readLine()) != null) {
 				result += line + "\n";
 			}
+			
 			Instant endTime = Instant.now();
 			long elapsedTime = Duration.between(startTime, endTime).toMillis();
-			System.out.println("[INFO: Duration of sunset execution: " + elapsedTime + "ms]");
+			logger.debug("Duration of sunset execution: " + elapsedTime + "ms");
 
 			return result.trim();
 
 		} catch (IOException e) {
 			this.destroyProcess();
-			return e.getMessage();
+			logger.warn(SunsetGlobalMessages.IO_EXCEPTION);
+			return SunsetGlobalMessages.IO_EXCEPTION;
 		}
 	}
 

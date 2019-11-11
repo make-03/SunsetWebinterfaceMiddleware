@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +17,8 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
 
 public class SunsetThreadPoolTests {
-	private static int TIMEOUT_SECONDS = 5;
+	private final Logger logger = Logger.getLogger(SunsetThreadPoolTests.class);
+	private final int TIMEOUT_SECONDS = 5;
 
 	private SunsetThreadPool sunsetThreadPool;
 	private String id;
@@ -25,7 +27,7 @@ public class SunsetThreadPoolTests {
 	public void setUp() {
 		this.sunsetThreadPool = new SunsetThreadPool();
 		this.id = UUID.randomUUID().toString();
-		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(TIMEOUT_SECONDS);
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(this.TIMEOUT_SECONDS);
 	}
 
 	@After
@@ -41,7 +43,8 @@ public class SunsetThreadPoolTests {
 				.isEqualTo(SunsetThreadPoolConfiguration.MAX_POOL_SIZE_DEFAULT);
 		assertThat(this.sunsetThreadPool.getQueueCapacity()).isNotNull().isNotNegative()
 				.isEqualTo(SunsetThreadPoolConfiguration.QUEUE_CAPACITY_DEFAULT);
-		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative().isEqualTo(TIMEOUT_SECONDS);
+		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative()
+				.isEqualTo(this.TIMEOUT_SECONDS);
 
 		this.sunsetThreadPool.shutdownExecutorService();
 
@@ -50,9 +53,7 @@ public class SunsetThreadPoolTests {
 
 	@Test
 	public void testHelloWorldCodeReturnsValidResult() throws InterruptedException, ExecutionException {
-		String code = this.getHelloWorldTestCode();
-
-		String result = this.sunsetThreadPool.runSunsetExecutor(code, this.id);
+		String result = this.sunsetThreadPool.startSunsetThread(this.getHelloWorldTestCode(), this.id);
 
 		assertThat(result).isNotNull().isNotEmpty().isEqualTo("Hello World");
 	}
@@ -63,9 +64,7 @@ public class SunsetThreadPoolTests {
 
 	@Test
 	public void testStandardElGamalCodeReturnsValidResult() throws InterruptedException, ExecutionException {
-		String codeStandardElGamal = this.getStandardElGamalTestCode();
-
-		String result = this.sunsetThreadPool.runSunsetExecutor(codeStandardElGamal, this.id);
+		String result = this.sunsetThreadPool.startSunsetThread(this.getStandardElGamalTestCode(), this.id);
 
 		assertThat(result).isNotNull().isNotEmpty().startsWith("message: 123\n\nciphertext: {")
 				.endsWith("decrypted into: 123");
@@ -91,7 +90,7 @@ public class SunsetThreadPoolTests {
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 
-		this.sunsetThreadPool.runSunsetExecutor("test", this.id);
+		this.sunsetThreadPool.startSunsetThread("test", this.id);
 
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
@@ -102,7 +101,9 @@ public class SunsetThreadPoolTests {
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 
-		this.sunsetThreadPool.runSunsetExecutor(this.getEndlessLoopTestCode(), this.id);
+		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
+				+ "seconds ...");
+		this.sunsetThreadPool.startSunsetThread(this.getEndlessLoopTestCode(), this.id);
 
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
@@ -112,6 +113,8 @@ public class SunsetThreadPoolTests {
 	public void testCodeWithEndlessLoopCausesTimeoutException() {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
 
+		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
+				+ " seconds ...");
 		assertThatThrownBy(() -> {
 			this.sunsetThreadPool.getFutureResult(sunsetExecutor, this.getEndlessLoopTestCode(), this.id);
 		}).isInstanceOf(TimeoutException.class);
@@ -124,7 +127,7 @@ public class SunsetThreadPoolTests {
 	}
 
 	@Test
-	public void testAbortPolicyOfThreadPoolThrowsRejectedExecutionExceptionIfThreadPoolAndQueueAreFull()
+	public void testAbortPolicyOfThreadPoolThrowsTaskRejectedExceptionIfThreadPoolAndQueueAreFull()
 			throws InterruptedException {
 		final int CORE_POOL_SIZE_TEST = 1;
 		final int MAX_POOL_SIZE_TEST = 1;

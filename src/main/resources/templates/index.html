@@ -1,170 +1,169 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<!--Let browser know website is optimized for mobile-->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta charset="utf-8">
+	<head>
+		<!--Let browser know website is optimized for mobile-->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta charset="utf-8">
+		
+		<!-- import Sunset Icon for Browser Tabs-->
+		<link rel="shortcut icon" href="/icons/sunset.ico">
+		
+		<!--Import Google Icons-->
+		<link rel="stylesheet" href="/icons/google_icons.css">
+		<!--Import materialize.css-->
+		<link type="text/css" rel="stylesheet"
+			href="/library/materialize/css/materialize.min.css"
+			media="screen,projection" />
+		<link type="text/css"
+			href="/library/css/jquery-ui-1.11.4.min.css">
+		<!--Import ui-layout stylesheets-->
+		<link rel="stylesheet"
+			href="/library/ui_layout/layout-default-latest.css">
+		<!--Import CodeMirror stylesheets-->
+		<link rel="stylesheet"
+			href="/library/codemirror/codemirror.css">
+		<link rel="stylesheet"
+			href="/library/codemirror/themes/eclipse.css">
+		<!--Good styles: eclipse-->
+		
+		<!--Import custom stylesheets-->
+		<link rel="stylesheet" href="/static_templates/standard.css">
+		<link rel="stylesheet" href="/static_templates/footer/footer.html">
+		<link rel="stylesheet"
+			href="/static_templates/ffapl-sidenav/ffapl-sidenav.css">
+		<link rel="stylesheet" href="/css/sunset-max-stylesheet.css">
+		
+		<title>Sunset Webinterface</title>
+	</head>
 	
-	<!-- import Sunset Icon for Browser Tabs-->
-	<link rel="shortcut icon" href="/icons/sunset.ico">
-	
-	<!--Import Google Icons-->
-	<link rel="stylesheet" href="/icons/google_icons.css">
-	<!--Import materialize.css-->
-	<link type="text/css" rel="stylesheet"
-		href="/library/materialize/css/materialize.min.css"
-		media="screen,projection" />
-	<link type="text/css"
-		href="/library/css/jquery-ui-1.11.4.min.css">
-	<!--Import ui-layout stylesheets-->
-	<link rel="stylesheet"
-		href="/library/ui_layout/layout-default-latest.css">
-	<!--Import CodeMirror stylesheets-->
-	<link rel="stylesheet"
-		href="/library/codemirror/codemirror.css">
-	<link rel="stylesheet"
-		href="/library/codemirror/themes/eclipse.css">
-	<!--Good styles: eclipse-->
-	
-	<!--Import custom stylesheets-->
-	<link rel="stylesheet" href="/static_templates/standard.css">
-	<link rel="stylesheet" href="/static_templates/footer/footer.html">
-	<link rel="stylesheet"
-		href="/static_templates/ffapl-sidenav/ffapl-sidenav.css">
-	<link rel="stylesheet" href="/css/sunset-max-stylesheet.css">
-	
-	<title>Sunset Webinterface</title>
-</head>
-
-<body>
-	<header>
-		<nav class="top-nav">
-			<a href="#" data-activates="nav-mobile"
-				class="left button-collapse top-nav full hide-on-large-only"><i
-				class="mdi-navigation-menu"></i></a>
-			<div class="container">
-				<div class="nav-wrapper center hide-on-med-and-down">
-					<!-- 03.04.2019 Added href (only works if this page is the default page on context path: "/") -->
-					<a class="page-title" href="/">Sunset Webinterface</a>
-				</div>
-			</div>
-		</nav>
-	</header>
-	<main role="main"> <!--Console Functions (Execute, Terminate, Undo, Redo, Save, Print File)-->
-	<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
-            others are added via function-panel.js-->          
-
-	<form name="execute" action="/result" method="POST" id="sendForm" onsubmit="return validateForm()">
-	</form>
-	<form name="cancel" action="/cancelled" method="POST" id="cancelForm">
-	</form>
-	
-    <textarea hidden="true" id="uniqueId" name="uniqueId" form="sendForm" readonly></textarea>
-    <!-- redundant info for cancelForm, because you cannot define 2 forms in 1 html-attribute! -->
-    <textarea hidden="true" id="uniqueId2" name="uniqueId2" form="cancelForm" readonly></textarea>
-
-	<div class="container">
-		<div id="function-panel" class="center">
-
-			<ul>
-				<li>
-					<button id="btnSend" data-tooltip="Ausf&uuml;hren" onclick="onBtnExecute()" 
-						form="sendForm" name="btnSend">
-						<i class="material-icons">play_arrow</i>
-					</button>
-				</li>
-				<li><button id="btnStop" data-tooltip="Terminieren" onclick="onBtnStopExecution()" 
-						form="cancelForm" name="btnStop">
-						<i class="material-icons">stop</i>
-					</button></li>
-				<li><button id="btnUndo" data-tooltip="R&uuml;ckg&auml;ngig"
-						onclick="undo()">
-						<i class="material-icons">undo</i>
-					</button></li>
-				<li><button id="btnRedo" data-tooltip="Wiederherstellen" onclick="redo()">
-						<i class="material-icons">redo</i>
-					</button></li>
-				<li><button id="btnUpload" data-tooltip="Datei hochladen..."
-						class="modal-trigger" href="#modalUpload">
-						<i class="material-icons">file_upload</i>
-					</button></li>
-				<li><button id="btnSave" data-tooltip="Speichern..." onclick="save()">
-						<i class="material-icons">save</i>
-					</button></li>
-				<li><button id="btnPrint" data-tooltip="Datei ausdrucken..."
-						onclick="print()">
-						<i class="material-icons">print</i>
-					</button></li>
-			</ul>
-
-		</div>
-	</div>
-
-	<!--Upload Dialog-->
-	<div id="modalUpload" class="modal">
-		<div class="modal-content">
-			<h4 class="center">Upload a file</h4>
-			<br>
-			<form action="#">
-				<div class="file-field input-field row">
-					<div class="btn">
-						<span>File</span> <input id="fileContainer" type="file"
-							accept=".ffapl">
+	<body>
+		<header>
+			<nav class="top-nav">
+				<a href="#" data-activates="nav-mobile"
+					class="left button-collapse top-nav full hide-on-large-only"><i
+					class="mdi-navigation-menu"></i></a>
+				<div class="container">
+					<div class="nav-wrapper center hide-on-med-and-down">
+						<!-- 03.04.2019 Added href (only works if this page is the default page on context path: "/") -->
+						<a class="page-title" href="/">Sunset Webinterface</a>
 					</div>
-					<input id="filePathField" class="file-path validate col s10"
-						type="text">
 				</div>
-			</form>
-			<div class="center">
-				<button class="btn waves-effect" onclick="uploadFile()">
-					<i class="material-icons left">file_upload</i> Upload
-				</button>
-				<a class="btn waves-effect" onclick="cancelUpload()"> <i
-					class="material-icons left">cancel</i> Cancel
-				</a>
-			</div>
-		</div>
-	</div>
+			</nav>
+		</header>
+		<main role="main"> <!--Console Functions (Execute, Terminate, Undo, Redo, Save, Print File)-->
+		<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
+	            others are added via function-panel.js-->          
 	
-	<!--Consoles-->
-	<div id="consoles" class="container non-selectable">
-		<div id="input-console" class="ui-layout-center">
-			<textarea id="inputTextArea" name="code" form="sendForm" th:text="${codeOriginal}"></textarea>
-		</div>
-		<div id="output-console" class="ui-layout-south">
-			<p class="bold">Sunset Output:</p>
-			<div class="divider"></div>
-			<div id="outputTextArea">
-				<textarea id="outputTextArea" th:text="${codeResult}" rows="5" readonly></textarea>
+		<form name="execute" action="/result" method="POST" id="sendForm" onsubmit="return validateForm()">
+		</form>
+		<form name="cancel" action="/cancelled" method="POST" id="cancelForm">
+		</form>
+		
+	    <textarea hidden="true" id="uniqueId" name="uniqueId" form="sendForm" readonly></textarea>
+	    <!-- redundant info for cancelForm, because you cannot define 2 forms in 1 html-attribute! -->
+	    <textarea hidden="true" id="uniqueId2" name="uniqueId2" form="cancelForm" readonly></textarea>
+	
+		<div class="container">
+			<div id="function-panel" class="center">
+	
+				<ul>
+					<li>
+						<button id="btnSend" data-tooltip="Ausf&uuml;hren" onclick="onBtnExecute()" 
+							form="sendForm" name="btnSend">
+							<i class="material-icons">play_arrow</i>
+						</button>
+					</li>
+					<li><button id="btnStop" data-tooltip="Terminieren" onclick="onBtnStopExecution()" 
+							form="cancelForm" name="btnStop">
+							<i class="material-icons">stop</i>
+						</button></li>
+					<li><button id="btnUndo" data-tooltip="R&uuml;ckg&auml;ngig"
+							onclick="undo()">
+							<i class="material-icons">undo</i>
+						</button></li>
+					<li><button id="btnRedo" data-tooltip="Wiederherstellen" onclick="redo()">
+							<i class="material-icons">redo</i>
+						</button></li>
+					<li><button id="btnUpload" data-tooltip="Datei hochladen..."
+							class="modal-trigger" href="#modalUpload">
+							<i class="material-icons">file_upload</i>
+						</button></li>
+					<li><button id="btnSave" data-tooltip="Speichern..." onclick="save()">
+							<i class="material-icons">save</i>
+						</button></li>
+					<li><button id="btnPrint" data-tooltip="Datei ausdrucken..."
+							onclick="print()">
+							<i class="material-icons">print</i>
+						</button></li>
+				</ul>
+	
 			</div>
 		</div>
-	</div>
-	</main>
-	<footer class="page-footer"></footer>
-
-	<!--Import jQuery at first-->
-	<script src="/library/js/jquery-2.1.4.min.js"
-		charset="utf-8"></script>
-	<script src="/library/js/jquery-ui-1.11.4.min.js"
-		charset="utf-8"></script>
-	<script src="/library/ui_layout/jquery.layout-latest.js"
-		charset="utf-8"></script>
-	<script src="/static_templates/ffapl_api.js"></script>
-	<!--This script contains all information about Sunset (FFapl-API)-->
-	<script
-		src="/static_templates/ffapl-sidenav/ffapl-sidenav-init.js"></script>
-	<script src="/static_templates/footer/footer.js"></script>
-	<script src="/js/htmlEntities.js"></script>
-	<!--Import other scripts like CodeMirror or Materialize-->
-	<script src="/library/materialize/js/materialize.min.js"
-		charset="utf-8"></script>
-	<script src="/library/codemirror/codemirror.js"
-		charset="utf-8"></script>
-	<script
-		src="/library/codemirror/mode/custom_mode_jslike.js"
-		charset="utf-8"></script>
-	<script src="/js/sunset-max-frontend-functions.js" charset="utf-8"></script>
-	<script src="/library/js/md5.js" charset="utf-8"></script>
-
-</body>
+	
+		<!--Upload Dialog-->
+		<div id="modalUpload" class="modal">
+			<div class="modal-content">
+				<h4 class="center">Upload a file</h4>
+				<br>
+				<form action="#">
+					<div class="file-field input-field row">
+						<div class="btn">
+							<span>File</span> <input id="fileContainer" type="file"
+								accept=".ffapl">
+						</div>
+						<input id="filePathField" class="file-path validate col s10"
+							type="text">
+					</div>
+				</form>
+				<div class="center">
+					<button class="btn waves-effect" onclick="uploadFile()">
+						<i class="material-icons left">file_upload</i> Upload
+					</button>
+					<a class="btn waves-effect" onclick="cancelUpload()"> <i
+						class="material-icons left">cancel</i> Cancel
+					</a>
+				</div>
+			</div>
+		</div>
+		
+		<!--Consoles-->
+		<div id="consoles" class="container non-selectable">
+			<div id="input-console" class="ui-layout-center">
+				<textarea id="inputTextArea" name="code" form="sendForm" th:text="${codeOriginal}"></textarea>
+			</div>
+			<div id="output-console" class="ui-layout-south">
+				<p class="bold">Sunset Output:</p>
+				<div class="divider"></div>
+				<div id="outputTextArea">
+					<textarea id="outputTextArea" th:text="${codeResult}" rows="5" readonly></textarea>
+				</div>
+			</div>
+		</div>
+		</main>
+		<footer class="page-footer"></footer>
+	
+		<!--Import jQuery at first-->
+		<script src="/library/js/jquery-2.1.4.min.js"
+			charset="utf-8"></script>
+		<script src="/library/js/jquery-ui-1.11.4.min.js"
+			charset="utf-8"></script>
+		<script src="/library/ui_layout/jquery.layout-latest.js"
+			charset="utf-8"></script>
+		<script src="/static_templates/ffapl_api.js"></script>
+		<!--This script contains all information about Sunset (FFapl-API)-->
+		<script
+			src="/static_templates/ffapl-sidenav/ffapl-sidenav-init.js"></script>
+		<script src="/static_templates/footer/footer.js"></script>
+		<script src="/js/htmlEntities.js"></script>
+		<!--Import other scripts like CodeMirror or Materialize-->
+		<script src="/library/materialize/js/materialize.min.js"
+			charset="utf-8"></script>
+		<script src="/library/codemirror/codemirror.js"
+			charset="utf-8"></script>
+		<script src="/library/codemirror/mode/custom_mode_jslike.js"
+			charset="utf-8"></script>
+		<script src="/js/sunset-max-frontend-functions.js" charset="utf-8"></script>
+		<script src="/library/js/md5.js" charset="utf-8"></script>
+	
+	</body>
 </html>

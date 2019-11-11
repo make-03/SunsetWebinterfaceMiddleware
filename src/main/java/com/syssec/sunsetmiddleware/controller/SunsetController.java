@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.log4j.Logger;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,19 +26,19 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
  */
 @Controller
 public class SunsetController {
+	private final Logger logger = Logger.getLogger(SunsetController.class);
 
 	private SunsetThreadPool sunsetThreadPool;
-
 	private Map<String, String> idToCode = new ConcurrentHashMap<>();
 
 	public SunsetController() {
 		this.sunsetThreadPool = new SunsetThreadPool();
-		System.out.println("[INFO:] " + SunsetGlobalMessages.CONTROLLER_SUCCESSFULLY_LOADED);
+		logger.info(SunsetGlobalMessages.CONTROLLER_SUCCESSFULLY_LOADED);
 	}
 
 	/**
 	 * Method used for receiving code from user (browser) and calling method
-	 * {@link com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool#runSunsetExecutor(String code, String id)}.
+	 * {@link com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool#startSunsetThread(String code, String id)}.
 	 * Result is then added as an object to the modelAndView and returned to the
 	 * user.
 	 * 
@@ -51,26 +52,30 @@ public class SunsetController {
 	 */
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
 	public ModelAndView executeCode(@RequestParam("code") String code, @RequestParam("uniqueId") String id)
-			throws InterruptedException, ExecutionException, TimeoutException, TaskRejectedException {
-		System.out.println("[INFO:] User-ID for this request: " + id);
-
+			throws InterruptedException, ExecutionException, TimeoutException, TaskRejectedException {	
 		if (code.isEmpty()) {
+			logger.warn(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 		}
+		
+		logger.info("Post Request received (User-ID: " + id + ")");
 
 		this.idToCode.put(id, code);
 
-		System.out.println("[INFO:] {ID = " + id + "}: Code received!\n" + code);
+		System.out.println("Code received (User-ID: " + id + "):\n" + code);
 
-		String result = this.sunsetThreadPool.runSunsetExecutor(code, id);
+		String result = this.sunsetThreadPool.startSunsetThread(code, id);
 
-		System.out.println("[INFO:] {ID = " + id + "}: Result of sunset execution:\n" + result);
-
-		this.idToCode.remove(id);
+		// logger.debug("Result of sunset execution:\n" + result);
 
 		ModelAndView modelAndView = new ModelAndView("index");
 		modelAndView.addObject("codeOriginal", code);
 		modelAndView.addObject("codeResult", result);
+		
+		this.idToCode.remove(id);
+		
+		System.out.println("Result of Execution (User-ID: " + id + ")\n" + result);
+		logger.info("Sunset Execution finished (User-ID: " + id + "), returning result ...");
 
 		return modelAndView;
 	}
@@ -89,13 +94,13 @@ public class SunsetController {
 		// workaround, map data structure which stores code for each unique user (id)
 		boolean wasCancelled = this.sunsetThreadPool.cancelExecutionOfSpecificThread(id);
 
+		logger.info(SunsetGlobalMessages.EXECUTION_CANCELLED_BY_USER + " (User-ID: " + id + ")");
+		
 		if (wasCancelled) {
-			System.out.println(SunsetGlobalMessages.THREAD_CANCELLED);
+			logger.debug(SunsetGlobalMessages.THREAD_CANCELLED);
 		} else {
-			System.out.println(SunsetGlobalMessages.THREAD_CANCELLED_FAILED);
+			logger.debug(SunsetGlobalMessages.THREAD_CANCELLED_FAILED);
 		}
-
-		System.out.println("[INFO:] {ID = " + id + "}: " + SunsetGlobalMessages.EXECUTION_CANCELLED_BY_USER);
 
 		String code = this.idToCode.get(id);
 

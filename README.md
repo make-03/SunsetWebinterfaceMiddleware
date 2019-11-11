@@ -34,13 +34,20 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ## List of changes + working features:
 
+* [11-11-2019] added log4j framework and implemented logging (to console and file)
+* [11-11-2019] added `log4j.properties` configuration file in `resources`
+* [11-11-2019] changed most system.out.println(...) statements with logger statements
+* [11-11-2019] updated ID generation in javascript (new structure: UNIX-timestamp in seconds + "-" + string with 22 "random" "characters)
+* [11-11-2019] minor improvements to unit tests
+
+---
+
 * [10-11-2019] added code to test abort policy from thread pool when threadpool and queue are full (for Controller and ThreadPool tests!)
 * [10-11-2019] added tests for manually canceling execution via http-request
 * [10-11-2019] small improvements to other parts of the unit-tests
 * [10-11-2019] sunsetexecutor processes now also have an automated timeout, improved code for this class
 * [10-11-2019] added new class containing public messages (`SunsetGlobalMessages`)
 * [10-11-2019] changed code for thread pool configuration
-* [10-11-2019] updated README
 
 ---
 
@@ -144,16 +151,18 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 ---
 
 ## List of features to implement/create in the future:
-* create logger class and store logging info (in local **log** files); create 2 seperate logging files for different content: **info.log** and **error.log**
+* add feature to notify users when they have to wait in queue for the calculation or when their calculation starts after being placed in the queue
+* add more unit tests
+* improve code structure and add more methods for better structure
 * edit existing `sunset webinterface`
+	 * test browser compatability with different modern browsers!
      * change/remove unused functions or scripts
-          * e.g. program code for PHP (not used in this version!)
+          * e.g. program code for PHP, old javascript (not used in this version!)
      * add basic console logging in java script
-     * change/remove/restructure elements (e.g. buttons or sidebar elements)
-* testing of the following scenarios:
-     * limiting concurrent threads in `application.properties` and test what happens when several users want to execute code concurrently
-     * what happens if user closes browser window during execution of code?
-* improve unique id generation for each user in javascript
+     * change/remove/restructure elements (e.g. buttons or sidebar elements like code snippets)
+* improve formating when printing code via the web interface and maybe include syntax highlighting
+* stopping of the spring boot app (which method would make sense?)
+
 
 * **potential future tasks, currently not needed**     
      * research `Docker` and its basic functionalities
@@ -161,4 +170,4 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-Last edited @ [10.11.2019]
+Last edited @ [11.11.2019]

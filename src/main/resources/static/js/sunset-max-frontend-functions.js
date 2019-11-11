@@ -125,8 +125,9 @@ $(document)
 
 					// generate random ID for user (does not
 					// need to be an UUID!)
-					var uniqueId = Math.random().toString(36).substring(2, 15)
-							+ Math.random().toString(36).substring(2, 15);
+					// UTC timestamp in seconds + "-" + string with 21-22 "random" characters
+					var uniqueId = Math.floor(Date.now() / 1000) + '-' + Math.random().toString(36).substring(2, 15)
+						+ Math.random().toString(36).substring(2, 15);
 					console.log("Generated ID: " + uniqueId); // logging ID
 																// for testing!
 					document.getElementById("uniqueId").innerHTML = uniqueId; // used

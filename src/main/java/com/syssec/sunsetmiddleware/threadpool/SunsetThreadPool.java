@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.log4j.Logger;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -25,6 +26,8 @@ import javafx.util.Pair;
  *
  */
 public class SunsetThreadPool {
+	private final Logger logger = Logger.getLogger(SunsetThreadPool.class);
+
 	private SunsetThreadPoolConfiguration threadPoolConfig;
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	private Map<String, Pair<Future<String>, SunsetExecutor>> idToFuture = new ConcurrentHashMap<>();
@@ -32,21 +35,26 @@ public class SunsetThreadPool {
 	public SunsetThreadPool() {
 		this.threadPoolConfig = new SunsetThreadPoolConfiguration();
 		this.threadPoolTaskExecutor = threadPoolConfig.getThreadPoolTaskExecutor();
+		logger.info(SunsetGlobalMessages.THREAD_POOL_SUCCESSFULLY_INITIALIZED);
 	}
 
-	public String runSunsetExecutor(String code, String id) throws InterruptedException, ExecutionException {
+	public String startSunsetThread(String code, String id) throws InterruptedException, ExecutionException {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
+		
+		logger.debug(SunsetGlobalMessages.SUNSET_THREAD_RUN);
 
 		String result;
 		try {
 			result = this.getFutureResult(sunsetExecutor, code, id);
 		} catch (TimeoutException e) {
-			result = "Timeout occurred after " + threadPoolTaskExecutor.getKeepAliveSeconds() + " seconds!";
+			result = String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION,
+					threadPoolTaskExecutor.getKeepAliveSeconds());
 			sunsetExecutor.destroyProcess();
-			e.printStackTrace();
+			logger.warn(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION,
+					threadPoolTaskExecutor.getKeepAliveSeconds()));
 		} catch (TaskRejectedException e) {
 			result = SunsetGlobalMessages.SERVER_IS_OVERLOADED;
-			e.printStackTrace();
+			logger.warn(SunsetGlobalMessages.SERVER_IS_OVERLOADED);
 		}
 
 		this.idToFuture.remove(id);
@@ -63,7 +71,7 @@ public class SunsetThreadPool {
 				if (sunsetExecutor.isProcessAlive()) {
 					sunsetExecutor.destroyProcess();
 				}
-				e.printStackTrace();
+				logger.warn(SunsetGlobalMessages.EXCEPTION, e);
 			}
 			return SunsetGlobalMessages.THREADPOOLTASKEXECUTOR_ERROR;
 		});

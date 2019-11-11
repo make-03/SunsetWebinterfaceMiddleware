@@ -7,6 +7,8 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 
 import static org.springframework.boot.SpringApplication.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * Main class used to start the SpringBoot-Application. CompoentScan-Annotion is
  * used to scan for classes that use the spring framework but are located in a
@@ -20,8 +22,10 @@ import static org.springframework.boot.SpringApplication.*;
 @ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.configuration.SunsetHttpsConfiguration.class)
 @SpringBootApplication
 public class App {
+	private final static Logger logger = Logger.getLogger(App.class);
+	
 	public static void main(String[] args) {
 		run(App.class, args);
-		System.out.println("[INFO:] " + SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
+		logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
 	}
 }
