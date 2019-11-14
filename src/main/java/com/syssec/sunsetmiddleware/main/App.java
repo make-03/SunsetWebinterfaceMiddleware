@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
+import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
 
 import static org.springframework.boot.SpringApplication.*;
 
@@ -26,6 +27,14 @@ public class App {
 	
 	public static void main(String[] args) {
 		run(App.class, args);
+		logger.info("Default values for ThreadPool: [Core Pool Size=" 
+					+ SunsetThreadPoolConfiguration.CORE_POOL_SIZE_DEFAULT
+					+ ", Max Pool Size=" 
+					+ SunsetThreadPoolConfiguration.MAX_POOL_SIZE_DEFAULT
+					+ ", Queue Capacity=" 
+					+ SunsetThreadPoolConfiguration.QUEUE_CAPACITY_DEFAULT
+					+ ", Keep Alive Seconds=" 
+					+ SunsetThreadPoolConfiguration.KEEP_ALIVE_SECONDS_DEFAULT);
 		logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
 	}
 }

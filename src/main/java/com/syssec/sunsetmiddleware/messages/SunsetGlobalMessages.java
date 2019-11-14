@@ -17,6 +17,7 @@ public class SunsetGlobalMessages {
 	
 	public static final String TIMEOUT_EXCEPTION = "Timeout occurred after %d seconds!";
 	public static final String IO_EXCEPTION = "IO Exception occurred!";
+	public static final String SIZE_LIMIT_EXCEEDED_EXCEPTION = "[EXCEPTION: Size of result String exceeded maximal length %d!]";
 	public static final String EXCEPTION = "Exception occurred!";
 	
 	public static final String EXECUTION_CANCELLED_BY_USER = "Execution was cancelled by the user!";
