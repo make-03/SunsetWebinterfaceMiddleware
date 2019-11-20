@@ -239,11 +239,19 @@ function validateForm() {
 
 		var a = document.createElement("a");
 		document.body.appendChild(a);
-		a.style = "display: none";
-
-		blob = new Blob([ code ], {
+		a.style = "display: none";	
+		
+		var blob = new Blob([ code ], {
 			type : "plain/text;charset=utf-8"
-		}), url = window.URL.createObjectURL(blob);
+		});
+		
+		if (window.navigator && window.navigator.msSaveBlob) {
+			console.log("Download: Edge/IE Browser");
+			window.navigator.msSaveOrOpenBlob(blob, fileName);  
+		} else {
+			console.log("Download: Other Browsers");
+			var url = window.URL.createObjectURL(blob);
+		}
 
 		console.group("Object URL");
 		console.log("Text:", code);

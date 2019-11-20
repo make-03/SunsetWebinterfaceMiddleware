@@ -12,7 +12,6 @@ import java.util.concurrent.TimeoutException;
 import javax.naming.SizeLimitExceededException;
 
 import org.apache.log4j.Logger;
-import org.apache.tomcat.util.http.fileupload.FileUploadBase.SizeException;
 
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;

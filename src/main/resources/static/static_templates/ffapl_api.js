@@ -315,7 +315,7 @@ API = {
         },
     	{
             id: "prog2",
-            name: "RSAExampleUpdated",
+            name: "RSA",
             code: "program RSA_Example{\n " +
             	"	const p: Prime := 11;\n " +
             	"	const q: Prime := 13;\n" + 

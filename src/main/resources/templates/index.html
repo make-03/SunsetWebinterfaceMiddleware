@@ -54,9 +54,9 @@
 		<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
 	            others are added via function-panel.js-->          
 	
-		<form name="execute" action="/result" method="POST" id="sendForm" onsubmit="return validateForm()">
+		<form action="#" th:action="@{/result}" name="execute" method="post" id="sendForm" onsubmit="return validateForm()">
 		</form>
-		<form name="cancel" action="/cancelled" method="POST" id="cancelForm">
+		<form action="#" th:action="@{/cancelled}" name="cancel" method="post" id="cancelForm">
 		</form>
 		
 	    <textarea hidden="true" id="uniqueId" name="uniqueId" form="sendForm" readonly></textarea>
@@ -68,12 +68,12 @@
 	
 				<ul>
 					<li>
-						<button id="btnSend" data-tooltip="Ausf&uuml;hren" onclick="onBtnExecute()" 
+						<button type="submit" id="btnSend" data-tooltip="Ausf&uuml;hren" onclick="onBtnExecute()" 
 							form="sendForm" name="btnSend">
 							<i class="material-icons">play_arrow</i>
 						</button>
 					</li>
-					<li><button id="btnStop" data-tooltip="Terminieren" onclick="onBtnStopExecution()" 
+					<li><button type="submit" id="btnStop" data-tooltip="Terminieren" onclick="onBtnStopExecution()" 
 							form="cancelForm" name="btnStop">
 							<i class="material-icons">stop</i>
 						</button></li>

@@ -1,12 +1,12 @@
 package com.syssec.sunsetmiddleware.main;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
-
-import static org.springframework.boot.SpringApplication.*;
 
 import org.apache.log4j.Logger;
 
@@ -26,7 +26,10 @@ public class App {
 	private final static Logger logger = Logger.getLogger(App.class);
 	
 	public static void main(String[] args) {
-		run(App.class, args);
+		SpringApplicationBuilder app = new SpringApplicationBuilder(App.class);
+		app.build().addListeners(new ApplicationPidFileWriter("./bin/shutdown.pid"));
+		app.run();
+		
 		logger.info("Default values for ThreadPool: [Core Pool Size=" 
 					+ SunsetThreadPoolConfiguration.CORE_POOL_SIZE_DEFAULT
 					+ ", Max Pool Size=" 
@@ -34,7 +37,8 @@ public class App {
 					+ ", Queue Capacity=" 
 					+ SunsetThreadPoolConfiguration.QUEUE_CAPACITY_DEFAULT
 					+ ", Keep Alive Seconds=" 
-					+ SunsetThreadPoolConfiguration.KEEP_ALIVE_SECONDS_DEFAULT);
+					+ SunsetThreadPoolConfiguration.KEEP_ALIVE_SECONDS_DEFAULT
+					+ "]");
 		logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
 	}
 }

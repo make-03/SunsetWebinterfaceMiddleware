@@ -34,6 +34,19 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ## List of changes + working features:
 
+* [20-11-2019] saving code in browser now works with newer versions of Edge/IE
+* [20-11-2019] added option to stop SpringBoot Application by storing PID of Application Context in local file (`./bin/shutdown.pid`) and then executing a *bat-file which kills the specific process (different commands for Windows and Linux!)
+* [20-11-2019] added `sunset_shutdown.bat` file
+* [20-11-2019] removed unused js-file
+* [20-11-2019] minor changes to pom.xml
+
+---
+
+* [14-11-2019] improved SunsetExecutor class
+* [14-11-2019] added logger to main App class
+
+---
+
 * [11-11-2019] added log4j framework and implemented logging (to console and file)
 * [11-11-2019] added `log4j.properties` configuration file in `resources`
 * [11-11-2019] changed most system.out.println(...) statements with logger statements
@@ -170,4 +183,4 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-Last edited @ [11.11.2019]
+Last edited @ [20.11.2019]
