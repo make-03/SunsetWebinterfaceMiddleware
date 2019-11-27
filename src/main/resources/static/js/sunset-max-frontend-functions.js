@@ -148,6 +148,7 @@ function validateForm() {
 		alert("Please enter some code before executing.");
 	    return false;
 	}
+	return true;
 }
 
 // Button-functions for function panel
@@ -170,6 +171,8 @@ function validateForm() {
 		document.getElementById("btnSave").disabled = true;
 		document.getElementById("btnPrint").disabled = true;
 
+		document.getElementById("sendForm").submit();
+		
 		code = code.replace(/(\r\n|\n|\r)/g, "\n");
 		if (code.length > 0) {
 			var hash = calcMD5(code);
@@ -186,6 +189,8 @@ function validateForm() {
 		document.getElementById("btnUpload").disabled = false;
 		document.getElementById("btnSave").disabled = false;
 		document.getElementById("btnPrint").disabled = false;
+		
+		document.getElementById("cancelForm").submit();
 	}
 
 	function undo() {

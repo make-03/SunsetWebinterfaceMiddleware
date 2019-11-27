@@ -33,7 +33,9 @@ public class CustomErrorController implements ErrorController {
 		if (status != null) {
 			Integer statusCode = Integer.valueOf(status.toString());
 
-			if (statusCode == HttpStatus.NOT_FOUND.value()) {
+			if (statusCode == HttpStatus.BAD_REQUEST.value()) {
+				return "error400";
+			}else if (statusCode == HttpStatus.NOT_FOUND.value()) {
 				return "error404";
 			} else if(statusCode == HttpStatus.METHOD_NOT_ALLOWED.value()) {
 				return "error405";
