@@ -2,7 +2,7 @@
 
 :::: Windows Commands
 set /p pid=<.\bin\shutdown.pid
-TASKKILL /F /PID %pid%
+TASKKILL /PID %pid% /T /F
 break>.\bin\shutdown.pid
 
 :::: Linux Commands

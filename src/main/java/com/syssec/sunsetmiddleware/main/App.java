@@ -5,8 +5,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.ComponentScan;
 
+import com.syssec.sunsetmiddleware.configuration.SunsetThreadPoolConfiguration;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
-import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
 
 import org.apache.log4j.Logger;
 
@@ -23,22 +23,25 @@ import org.apache.log4j.Logger;
 @ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.configuration.SunsetHttpsConfiguration.class)
 @SpringBootApplication
 public class App {
+	public static SunsetThreadPoolConfiguration threadPoolConfiguration = new SunsetThreadPoolConfiguration();
+	
 	private final static Logger logger = Logger.getLogger(App.class);
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		SpringApplicationBuilder app = new SpringApplicationBuilder(App.class);
 		app.build().addListeners(new ApplicationPidFileWriter("./bin/shutdown.pid"));
 		app.run();
 		
 		logger.info("Default values for ThreadPool: [Core Pool Size=" 
-					+ SunsetThreadPoolConfiguration.CORE_POOL_SIZE_DEFAULT
+					+ threadPoolConfiguration.getCorepoolsize()
 					+ ", Max Pool Size=" 
-					+ SunsetThreadPoolConfiguration.MAX_POOL_SIZE_DEFAULT
+					+ threadPoolConfiguration.getMaxpoolsize()
 					+ ", Queue Capacity=" 
-					+ SunsetThreadPoolConfiguration.QUEUE_CAPACITY_DEFAULT
+					+ threadPoolConfiguration.getQueuecapacity()
 					+ ", Keep Alive Seconds=" 
-					+ SunsetThreadPoolConfiguration.KEEP_ALIVE_SECONDS_DEFAULT
+					+ threadPoolConfiguration.getKeepaliveseconds()
 					+ "]");
 		logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
 	}
+	
 }

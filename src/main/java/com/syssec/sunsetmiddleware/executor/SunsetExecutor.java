@@ -9,12 +9,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.PreDestroy;
 import javax.naming.SizeLimitExceededException;
 
 import org.apache.log4j.Logger;
 
+import com.syssec.sunsetmiddleware.configuration.SunsetThreadPoolConfiguration;
+import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
-import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
 
 /**
  * Class for managing the execution of the received code with sunset (via
@@ -33,7 +35,7 @@ public class SunsetExecutor {
 	private int timeoutSeconds;
 
 	public SunsetExecutor() {
-		this.timeoutSeconds = SunsetThreadPoolConfiguration.KEEP_ALIVE_SECONDS_DEFAULT + 5; // TODO: what value?
+		this.timeoutSeconds = App.threadPoolConfiguration.getKeepaliveseconds() + 5;
 
 		try {
 			this.process = Runtime.getRuntime().exec("java -jar " + sunsetPath + " --cmd");
@@ -118,6 +120,12 @@ public class SunsetExecutor {
 			return String.format(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION, this.MAXIMUM_RESULT_STRING_LENGTH)
 					+ "\n" + result;
 		}
+	}
+	
+	@PreDestroy
+	public void forciblyDestroyProcess() {
+		System.out.println("(@PreDestroy) EXECUTOR: forcibly destroying process ...");
+		this.process.destroyForcibly();
 	}
 
 	public void destroyProcess() {

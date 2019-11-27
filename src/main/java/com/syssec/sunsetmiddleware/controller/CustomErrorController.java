@@ -35,6 +35,8 @@ public class CustomErrorController implements ErrorController {
 
 			if (statusCode == HttpStatus.NOT_FOUND.value()) {
 				return "error404";
+			} else if(statusCode == HttpStatus.METHOD_NOT_ALLOWED.value()) {
+				return "error405";
 			} else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
 				return "error500";
 			}

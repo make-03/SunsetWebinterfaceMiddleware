@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.log4j.Logger;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.stereotype.Controller;
@@ -66,8 +68,6 @@ public class SunsetController {
 
 		String result = this.sunsetThreadPool.startSunsetThread(code, id);
 
-		// logger.debug("Result of sunset execution:\n" + result);
-
 		ModelAndView modelAndView = new ModelAndView("index");
 		modelAndView.addObject("codeOriginal", code);
 		modelAndView.addObject("codeResult", result);
@@ -111,6 +111,12 @@ public class SunsetController {
 		this.idToCode.remove(id);
 
 		return modelAndView;
+	}
+	
+	@PreDestroy
+	public void shutdownExecutorService() {
+		System.out.println("(@PreDestroy) CONTROLLER: shutdown executor service ...");
+		this.sunsetThreadPool.shutdownThreadPool();
 	}
 
 	public SunsetThreadPool getSunsetThreadPool() {

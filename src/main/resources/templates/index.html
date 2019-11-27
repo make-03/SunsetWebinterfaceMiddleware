@@ -52,13 +52,16 @@
 		</header>
 		<main role="main"> <!--Console Functions (Execute, Terminate, Undo, Redo, Save, Print File)-->
 		<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
-	            others are added via function-panel.js-->          
-	
-		<form action="#" th:action="@{/result}" name="execute" method="post" id="sendForm" onsubmit="return validateForm()">
+	            others are added via function-panel.js
+	    --> 
+	             
+		<!-- th:action="@{/result}" th:action="@{/cancelled}" -->
+		 
+		<form action="result" method="post" id="sendForm" onsubmit="return validateForm()">
 		</form>
-		<form action="#" th:action="@{/cancelled}" name="cancel" method="post" id="cancelForm">
+		<form action="cancelled" method="post" id="cancelForm">
 		</form>
-		
+
 	    <textarea hidden="true" id="uniqueId" name="uniqueId" form="sendForm" readonly></textarea>
 	    <!-- redundant info for cancelForm, because you cannot define 2 forms in 1 html-attribute! -->
 	    <textarea hidden="true" id="uniqueId2" name="uniqueId2" form="cancelForm" readonly></textarea>
@@ -73,25 +76,31 @@
 							<i class="material-icons">play_arrow</i>
 						</button>
 					</li>
-					<li><button type="submit" id="btnStop" data-tooltip="Terminieren" onclick="onBtnStopExecution()" 
+					<li>
+						<button type="submit" id="btnStop" data-tooltip="Terminieren" onclick="onBtnStopExecution()" 
 							form="cancelForm" name="btnStop">
 							<i class="material-icons">stop</i>
 						</button></li>
-					<li><button id="btnUndo" data-tooltip="R&uuml;ckg&auml;ngig"
+					<li>
+						<button id="btnUndo" data-tooltip="R&uuml;ckg&auml;ngig"
 							onclick="undo()">
 							<i class="material-icons">undo</i>
 						</button></li>
-					<li><button id="btnRedo" data-tooltip="Wiederherstellen" onclick="redo()">
+					<li>
+						<button id="btnRedo" data-tooltip="Wiederherstellen" onclick="redo()">
 							<i class="material-icons">redo</i>
 						</button></li>
-					<li><button id="btnUpload" data-tooltip="Datei hochladen..."
+					<li>
+						<button id="btnUpload" data-tooltip="Datei hochladen..."
 							class="modal-trigger" href="#modalUpload">
 							<i class="material-icons">file_upload</i>
 						</button></li>
-					<li><button id="btnSave" data-tooltip="Speichern..." onclick="save()">
+					<li>
+						<button id="btnSave" data-tooltip="Speichern..." onclick="save()">
 							<i class="material-icons">save</i>
 						</button></li>
-					<li><button id="btnPrint" data-tooltip="Datei ausdrucken..."
+					<li>
+						<button id="btnPrint" data-tooltip="Datei ausdrucken..."
 							onclick="print()">
 							<i class="material-icons">print</i>
 						</button></li>

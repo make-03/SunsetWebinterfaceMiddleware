@@ -8,11 +8,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.log4j.Logger;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
+import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 
 import javafx.util.Pair;
@@ -28,13 +31,11 @@ import javafx.util.Pair;
 public class SunsetThreadPool {
 	private final Logger logger = Logger.getLogger(SunsetThreadPool.class);
 
-	private SunsetThreadPoolConfiguration threadPoolConfig;
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	private Map<String, Pair<Future<String>, SunsetExecutor>> idToFuture = new ConcurrentHashMap<>();
 
 	public SunsetThreadPool() {
-		this.threadPoolConfig = new SunsetThreadPoolConfiguration();
-		this.threadPoolTaskExecutor = threadPoolConfig.getThreadPoolTaskExecutor();
+		this.threadPoolTaskExecutor = App.threadPoolConfiguration.getThreadPoolTaskExecutor();
 		logger.info(SunsetGlobalMessages.THREAD_POOL_SUCCESSFULLY_INITIALIZED);
 	}
 
@@ -78,7 +79,7 @@ public class SunsetThreadPool {
 
 		this.idToFuture.put(id, new Pair<Future<String>, SunsetExecutor>(future, sunsetExecutor));
 
-		return future.get(this.threadPoolConfig.getThreadPoolTaskExecutor().getKeepAliveSeconds(), TimeUnit.SECONDS);
+		return future.get(this.threadPoolTaskExecutor.getKeepAliveSeconds(), TimeUnit.SECONDS);
 	}
 
 	public boolean cancelExecutionOfSpecificThread(String id) {
@@ -92,6 +93,16 @@ public class SunsetThreadPool {
 		}
 
 		return false;
+	}
+	
+	@PreDestroy
+	public void shutdownThreadPool() {
+		System.out.println("(@PreDestroy) THREADPOOL: shutdown threadpool ...");
+		this.shutdownExecutorService();
+		this.idToFuture.values().forEach((pair) -> {
+			System.out.println("(@PreDestroy) THREADPOOL: forcibly destroying process ...");
+			pair.getValue().forciblyDestroyProcess();
+		});
 	}
 
 	public void shutdownExecutorService() {
@@ -115,7 +126,7 @@ public class SunsetThreadPool {
 	}
 
 	public int getQueueCapacity() {
-		return SunsetThreadPoolConfiguration.QUEUE_CAPACITY_DEFAULT;
+		return App.threadPoolConfiguration.getQueuecapacity();
 	}
 
 	public int getActiveCount() {

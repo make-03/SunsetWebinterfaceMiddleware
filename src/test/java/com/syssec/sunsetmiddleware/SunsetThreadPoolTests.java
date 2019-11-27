@@ -12,9 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.task.TaskRejectedException;
 
+import com.syssec.sunsetmiddleware.configuration.SunsetThreadPoolConfiguration;
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
+import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
-import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPoolConfiguration;
 
 public class SunsetThreadPoolTests {
 	private final Logger logger = Logger.getLogger(SunsetThreadPoolTests.class);
@@ -27,7 +28,18 @@ public class SunsetThreadPoolTests {
 	public void setUp() {
 		this.sunsetThreadPool = new SunsetThreadPool();
 		this.id = UUID.randomUUID().toString();
+		this.resetThreadPoolConfigToDefaultValues();
+		
 		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(this.TIMEOUT_SECONDS);
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().initialize();
+	}
+	
+	private void resetThreadPoolConfigToDefaultValues() {
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().setCorePoolSize(App.threadPoolConfiguration.getCorepoolsize());
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().setMaxPoolSize(App.threadPoolConfiguration.getMaxpoolsize());
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().setQueueCapacity(App.threadPoolConfiguration.getQueuecapacity());
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(App.threadPoolConfiguration.getKeepaliveseconds());
+		this.sunsetThreadPool.getThreadPoolTaskExecutor().initialize();
 	}
 
 	@After
@@ -36,13 +48,13 @@ public class SunsetThreadPoolTests {
 	}
 
 	@Test
-	public void testSunsetThreadPoolWithDefaultConstructor() {
+	public void testSunsetThreadPoolWithDefaultValues() {
 		assertThat(this.sunsetThreadPool.getCorePoolSize()).isNotNull().isNotNegative()
-				.isEqualTo(SunsetThreadPoolConfiguration.CORE_POOL_SIZE_DEFAULT);
+				.isEqualTo(App.threadPoolConfiguration.getCorepoolsize());
 		assertThat(this.sunsetThreadPool.getMaxPoolSize()).isNotNull().isNotNegative()
-				.isEqualTo(SunsetThreadPoolConfiguration.MAX_POOL_SIZE_DEFAULT);
+				.isEqualTo(App.threadPoolConfiguration.getMaxpoolsize());
 		assertThat(this.sunsetThreadPool.getQueueCapacity()).isNotNull().isNotNegative()
-				.isEqualTo(SunsetThreadPoolConfiguration.QUEUE_CAPACITY_DEFAULT);
+				.isEqualTo(App.threadPoolConfiguration.getQueuecapacity());
 		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative()
 				.isEqualTo(this.TIMEOUT_SECONDS);
 
