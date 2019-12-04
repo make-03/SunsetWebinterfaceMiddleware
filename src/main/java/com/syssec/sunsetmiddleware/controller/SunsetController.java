@@ -68,8 +68,6 @@ public class SunsetController {
 
 	@RequestMapping(value = { "/cancelled" }, method = RequestMethod.POST)
 	public ModelAndView cancelExecution(@RequestParam("uniqueId2") String id) {
-		// TODO: error when passing parameter code for stopExecution ->
-		// workaround, map data structure which stores code for each unique user (id)
 		boolean wasCancelled = this.sunsetThreadPool.cancelExecutionOfSpecificThread(id);
 
 		logger.info(SunsetGlobalMessages.EXECUTION_CANCELLED_BY_USER + " (User-ID: " + id + ")");

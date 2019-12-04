@@ -8,6 +8,11 @@ import org.springframework.context.annotation.ComponentScan;
 import com.syssec.sunsetmiddleware.configuration.SunsetThreadPoolConfiguration;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.annotation.PreDestroy;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -27,7 +32,7 @@ public class App {
 	
 	private final static Logger logger = Logger.getLogger(App.class);
 	
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 		SpringApplicationBuilder app = new SpringApplicationBuilder(App.class);
 		app.build().addListeners(new ApplicationPidFileWriter("./bin/shutdown.pid"));
 		app.run();
@@ -42,6 +47,17 @@ public class App {
 					+ threadPoolConfiguration.getKeepaliveseconds()
 					+ "]");
 		logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
+	}
+	
+	@PreDestroy
+	public void shutdownApplication() {
+		System.out.println("(@PreDestroy) APP: shutting down application, deleting \"./bin/shutdown.pid\" ...");
+		File newFile = new File("./bin/shutdown.pid");
+		try {
+			newFile.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
