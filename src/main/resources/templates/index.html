@@ -28,9 +28,7 @@
 		
 		<!--Import custom stylesheets-->
 		<link rel="stylesheet" href="/static_templates/standard.css">
-		<link rel="stylesheet" href="/static_templates/footer/footer.html">
-		<link rel="stylesheet"
-			href="/static_templates/ffapl-sidenav/ffapl-sidenav.css">
+		<link rel="stylesheet" href="/static_templates/ffapl-sidenav/ffapl-sidenav.css">
 		<link rel="stylesheet" href="/css/sunset-max-stylesheet.css">
 		
 		<title>Sunset Webinterface</title>
@@ -44,7 +42,6 @@
 					class="mdi-navigation-menu"></i></a>
 				<div class="container">
 					<div class="nav-wrapper center hide-on-med-and-down">
-						<!-- 03.04.2019 Added href (only works if this page is the default page on context path: "/") -->
 						<a class="page-title" href="/">Sunset Webinterface</a>
 					</div>
 				</div>
@@ -54,8 +51,6 @@
 		<!--Only add the 'data-tooltip' and onclick attribute to the 'a', 
 	            others are added via function-panel.js
 	    --> 
-	             
-		<!-- th:action="@{/result}" th:action="@{/cancelled}" -->
 		 
 		<form action="result" method="post" id="sendForm" onsubmit="return validateForm()">
 		</form>

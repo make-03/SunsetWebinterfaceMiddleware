@@ -14,13 +14,13 @@ import javax.naming.SizeLimitExceededException;
 
 import org.apache.log4j.Logger;
 
-import com.syssec.sunsetmiddleware.configuration.SunsetThreadPoolConfiguration;
 import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 
 /**
  * Class for managing the execution of the received code with sunset (via
- * execution of sunset process using stdin/stdout).
+ * execution of sunset process using stdin/stdout). Each thread from the 
+ * ThreadPool starts its own seperate sunset process.
  * 
  * @author Markus R.
  *
@@ -28,9 +28,9 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 public class SunsetExecutor {
 	private final Logger logger = Logger.getLogger(SunsetExecutor.class);
 	
+	private final String SUNSET_PATH = "sunset.jar";
 	private final int MAXIMUM_RESULT_STRING_LENGTH = 32768;
 
-	private String sunsetPath = "sunset.jar";
 	private Process process;
 	private int timeoutSeconds;
 
@@ -38,22 +38,12 @@ public class SunsetExecutor {
 		this.timeoutSeconds = App.threadPoolConfiguration.getKeepaliveseconds() + 5;
 
 		try {
-			this.process = Runtime.getRuntime().exec("java -jar " + sunsetPath + " --cmd");
+			this.process = Runtime.getRuntime().exec("java -jar " + this.SUNSET_PATH + " --cmd");
 		} catch (IOException e) {
 			logger.warn(SunsetGlobalMessages.IO_EXCEPTION);
 		}
 	}
 
-	/**
-	 * Method used for executing sunset via commandline using the code sent by the
-	 * user.
-	 * 
-	 * @param code - Code received by the user
-	 * @return result of code execution as plain text (String)
-	 * @throws TimeoutException
-	 * @throws InterruptedException
-	 * @throws SizeLimitExceededException 
-	 */
 	public String executeCommand(String receivedCode) throws TimeoutException, InterruptedException {
 		if (receivedCode.isEmpty()) {
 			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
@@ -82,7 +72,7 @@ public class SunsetExecutor {
 
 			while (this.process.isAlive()) {
 				if (System.currentTimeMillis() > timoutTime) {
-					this.closeBufferedReaders(in, out);
+					this.closeBufferedReaderAndWriter(in, out);
 					this.destroyProcess();
 					logger.warn(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION, this.timeoutSeconds));
 					throw new TimeoutException(
@@ -97,21 +87,20 @@ public class SunsetExecutor {
 				if (result.length() < this.MAXIMUM_RESULT_STRING_LENGTH) {
 					result += line + "\n";
 				} else {
-					this.closeBufferedReaders(in, out);
+					this.closeBufferedReaderAndWriter(in, out);
 					this.destroyProcess();
 					logger.warn(String.format(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION, this.MAXIMUM_RESULT_STRING_LENGTH));
 					throw new SizeLimitExceededException(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION);
 				}
 			}
 
-			this.closeBufferedReaders(in, out);
+			this.closeBufferedReaderAndWriter(in, out);
 
 			Instant endTime = Instant.now();
 			long elapsedTime = Duration.between(startTime, endTime).toMillis();
 			logger.debug("Duration of sunset execution: " + elapsedTime + "ms");
 
 			return result.trim();
-
 		} catch(IOException e) {
 			this.destroyProcess();
 			logger.warn(SunsetGlobalMessages.IO_EXCEPTION);
@@ -122,10 +111,9 @@ public class SunsetExecutor {
 		}
 	}
 	
-	@PreDestroy
-	public void forciblyDestroyProcess() {
-		System.out.println("(@PreDestroy) EXECUTOR: forcibly destroying process ...");
-		this.process.destroyForcibly();
+	private void closeBufferedReaderAndWriter(BufferedReader in, BufferedWriter out) throws IOException {
+		in.close();
+		out.close();
 	}
 
 	public void destroyProcess() {
@@ -144,9 +132,10 @@ public class SunsetExecutor {
 		this.timeoutSeconds = timeoutSeconds;
 	}
 
-	private void closeBufferedReaders(BufferedReader in, BufferedWriter out) throws IOException {
-		in.close();
-		out.close();
+	@PreDestroy
+	public void forciblyDestroyProcess() {
+		System.out.println("(@PreDestroy) EXECUTOR: forcibly destroying process ...");
+		this.process.destroyForcibly();
 	}
-
+	
 }

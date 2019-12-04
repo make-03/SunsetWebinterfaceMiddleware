@@ -223,11 +223,11 @@ public class SunsetControllerTests {
 		this.threadExecuteCodeHelloWorld2.start();
 		Thread.sleep(50);
 		this.threadExecuteCodeHelloWorld3CausingTaskRejectionException.start();
-
+		
+		this.threadExecuteCodeHelloWorld3CausingTaskRejectionException.join();
 		this.threadExecuteCodeHelloWorld1.join();
 		this.threadExecuteCodeHelloWorld2.join();
-		this.threadExecuteCodeHelloWorld3CausingTaskRejectionException.join();
-
+		
 		assertThat(this.resultThread1).isNotNull().isNotEmpty().isEqualTo("Hello World");
 		assertThat(this.resultThread2).isNotNull().isNotEmpty().isEqualTo("Hello World");
 		assertThat(this.resultThread3).isNotNull().isNotEmpty().isEqualTo(SunsetGlobalMessages.SERVER_IS_OVERLOADED);

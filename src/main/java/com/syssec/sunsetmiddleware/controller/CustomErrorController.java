@@ -18,14 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class CustomErrorController implements ErrorController {
 
-	/**
-	 * Method for handling (HTTP)errors that can occur. For this project only
-	 * "general error", "error 404 - page not found" and "error 500 - internal
-	 * server errror" are defined.
-	 * 
-	 * @param request
-	 * @return name of the template to be loaded
-	 */
 	@RequestMapping("/error")
 	public String handleError(HttpServletRequest request) {
 		Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);

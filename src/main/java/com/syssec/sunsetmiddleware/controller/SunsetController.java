@@ -38,20 +38,6 @@ public class SunsetController {
 		logger.info(SunsetGlobalMessages.CONTROLLER_SUCCESSFULLY_LOADED);
 	}
 
-	/**
-	 * Method used for receiving code from user (browser) and calling method
-	 * {@link com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool#startSunsetThread(String code, String id)}.
-	 * Result is then added as an object to the modelAndView and returned to the
-	 * user.
-	 * 
-	 * @param code - plain text code entered by the user
-	 * @param id   - generated ID (in browser) to identify which user sent which
-	 *             code/request
-	 * @return modelAndView that contains name of template and additional objects
-	 * @throws TimeoutException
-	 * @throws ExecutionException
-	 * @throws InterruptedException
-	 */
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
 	public ModelAndView executeCode(@RequestParam("code") String code, @RequestParam("uniqueId") String id)
 			throws InterruptedException, ExecutionException, TimeoutException, TaskRejectedException {	
@@ -80,14 +66,6 @@ public class SunsetController {
 		return modelAndView;
 	}
 
-	/**
-	 * Method used for manually cancelling execution of sunset by the user via the
-	 * browser.
-	 * 
-	 * @param id - generated ID (in browser) to identify which user sent which
-	 *           code/request
-	 * @return modelAndView that contains name of template and additional objects
-	 */
 	@RequestMapping(value = { "/cancelled" }, method = RequestMethod.POST)
 	public ModelAndView cancelExecution(@RequestParam("uniqueId2") String id) {
 		// TODO: error when passing parameter code for stopExecution ->
@@ -112,15 +90,16 @@ public class SunsetController {
 
 		return modelAndView;
 	}
+
+
+	public SunsetThreadPool getSunsetThreadPool() {
+		return this.sunsetThreadPool;
+	}
 	
 	@PreDestroy
 	public void shutdownExecutorService() {
 		System.out.println("(@PreDestroy) CONTROLLER: shutdown executor service ...");
 		this.sunsetThreadPool.shutdownThreadPool();
-	}
-
-	public SunsetThreadPool getSunsetThreadPool() {
-		return this.sunsetThreadPool;
 	}
 
 }

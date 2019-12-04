@@ -125,9 +125,9 @@ $(document)
 
 					// generate random ID for user (does not
 					// need to be an UUID!)
-					// UTC timestamp in seconds + "-" + string with 21-22 "random" characters
-					var uniqueId = Math.floor(Date.now() / 1000) + '-' + Math.random().toString(36).substring(2, 15)
-						+ Math.random().toString(36).substring(2, 15);
+					// UTC timestamp in seconds + "-" + string with 20 "random" hexadecimal characters
+					var uniqueId = Math.floor(Date.now() / 1000) + '-' + Math.random().toString(16).substring(2, 12)
+						+ Math.random().toString(16).substring(2, 12);
 					console.log("Generated ID: " + uniqueId); // logging ID
 																// for testing!
 					document.getElementById("uniqueId").innerHTML = uniqueId; // used
@@ -138,12 +138,15 @@ $(document)
 					document.getElementById("uniqueId2").innerHTML = uniqueId; // used
 																				// for
 																				// "cancelForm"
-
 					console.log('Page successfully initialized!');
 				});
 
+function getCode() {
+	return codeMirrorEditor.getValue();
+}
+
 function validateForm() {
-	var code = codeMirrorEditor.getValue();
+	var code = getCode();
 	if (!code.length > 0) {
 		alert("Please enter some code before executing.");
 	    return false;
@@ -155,8 +158,8 @@ function validateForm() {
 {
 	function onBtnExecute() {
 		console.log('Clicked execution button!');
-		
-		var code = codeMirrorEditor.getValue();
+
+		var code = getCode();
 		
 		if (!code.length > 0) {
 			console.log('No code entered! Cannot execute empty code!');
@@ -251,7 +254,7 @@ function validateForm() {
 		});
 		
 		if (window.navigator && window.navigator.msSaveBlob) {
-			console.log("Download: Edge/IE Browser");
+			console.log("Download: Edge Browser");
 			window.navigator.msSaveOrOpenBlob(blob, fileName);  
 		} else {
 			console.log("Download: Other Browsers");
@@ -275,6 +278,7 @@ function validateForm() {
 	/* Fetches the text(innerHTML) of the CodeMirror and prints it */
 	function print() {
 		console.log('Clicked the print button!');
+
 		var code = codeMirrorEditor.getValue();
 		if (!code.length > 0) {
 			alert("Please write something before printing.");
@@ -296,12 +300,13 @@ function validateForm() {
 	var filePathField = $('#filePathField');
 	function uploadFile() {
 		console.log('Clicked the upload button!');
+		
 		if (window.File && window.FileReader && window.FileList && window.Blob) {
 			// Great success! All the File APIs are supported - Show the dialog.
 			var files = fileContainer.prop('files');
 
 			var reader = new FileReader();
-			// Callback for FileReader when he finished reading a file
+			// Callback for FileReader when it finished reading a file
 			reader.onload = function(e) {
 				codeMirrorEditor.getDoc().setValue(reader.result);
 				$('#modalUpload').closeModal();
@@ -310,7 +315,7 @@ function validateForm() {
 				var fileReader = reader.readAsText(f);
 			}
 		} else {
-			alert('Can\' upload file. The File APIs are not fully supported in this browser.');
+			alert('Cannot upload file. The File APIs are not fully supported in this browser.');
 		}
 	}
 

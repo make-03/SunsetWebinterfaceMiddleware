@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.task.TaskRejectedException;
 
-import com.syssec.sunsetmiddleware.configuration.SunsetThreadPoolConfiguration;
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
 import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
@@ -156,9 +155,9 @@ public class SunsetThreadPoolTests {
 		Thread.sleep(50);
 		this.threadRunHelloWorldCode3CausingTaskRejectionException.start();
 
+		this.threadRunHelloWorldCode3CausingTaskRejectionException.join();
 		this.threadRunHelloWorldCode1.join();
 		this.threadRunHelloWorldCode2.join();
-		this.threadRunHelloWorldCode3CausingTaskRejectionException.join();
 
 		assertThat(this.resultThread1).isNotNull().isNotEmpty().isEqualTo("Hello World");
 		assertThat(this.resultThread2).isNotNull().isNotEmpty().isEqualTo("Hello World");

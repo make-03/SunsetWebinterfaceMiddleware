@@ -21,7 +21,7 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 import javafx.util.Pair;
 
 /**
- * Class for managing the ExecutorService using a FixedThreadPool. Each thread
+ * Class for managing the ThreadPoolTaskExecutor. Each thread
  * (Future<String> object) starts its own process of sunset to calculate the
  * result.
  * 
@@ -94,16 +94,6 @@ public class SunsetThreadPool {
 
 		return false;
 	}
-	
-	@PreDestroy
-	public void shutdownThreadPool() {
-		System.out.println("(@PreDestroy) THREADPOOL: shutdown threadpool ...");
-		this.shutdownExecutorService();
-		this.idToFuture.values().forEach((pair) -> {
-			System.out.println("(@PreDestroy) THREADPOOL: forcibly destroying process ...");
-			pair.getValue().forciblyDestroyProcess();
-		});
-	}
 
 	public void shutdownExecutorService() {
 		this.threadPoolTaskExecutor.shutdown();
@@ -147,6 +137,16 @@ public class SunsetThreadPool {
 
 	public long getCompletedTaskCount() {
 		return this.threadPoolTaskExecutor.getThreadPoolExecutor().getCompletedTaskCount();
+	}
+	
+	@PreDestroy
+	public void shutdownThreadPool() {
+		System.out.println("(@PreDestroy) THREADPOOL: shutdown threadpool ...");
+		this.shutdownExecutorService();
+		this.idToFuture.values().forEach((pair) -> {
+			System.out.println("(@PreDestroy) THREADPOOL: forcibly destroying process ...");
+			pair.getValue().forciblyDestroyProcess();
+		});
 	}
 
 }

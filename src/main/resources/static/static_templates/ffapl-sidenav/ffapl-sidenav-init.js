@@ -4,6 +4,8 @@ var linkToMaxVersion = "sunset-max.html";
 var syssecLogoSource = "/img/syssec_logo.svg";
 var navId, cme;
 
+var code;
+
 FFaplApiSideNav = {
     // @Param isMobile      Whether the navbar should be a slide-out or not
     init: function (isMobile) {
@@ -29,7 +31,14 @@ FFaplApiSideNav = {
             "<textarea id='txtaProgramCode' style=''></textarea>" +
             "</div>" +
             "<div class='modal-footer'>" +
+            "<ul class='collapsible' data-collapsible='accordion'>" + 
+            "<li>" + 
             "<a class='modal-action modal-close waves-effect btn-flat'>Close</a>" +
+            "</li>" +
+            "<li>" +    
+            "<a class='modal-action modal-copy waves-effect btn-flat' onclick='copyCodeToClipBoard()'>Copy Example to Clip Board</a>" +
+            "</li>" +
+            "</ul>" +
             "</div></div>");
 
         $('body>main').append(
@@ -188,8 +197,6 @@ FFaplApiSideNav = {
     /** @Param version      Is either 'min' or 'max'. Appends a Link to the designated html version of the interface.
      *                      If version === 'min', then it appends a link to the min version.
      */
-    
-    // altered 02.04.2019
     appendVersionLink: function (version) {
         var container = $("#" + navId);
         if (version == 'min') {
@@ -223,6 +230,8 @@ FFaplApiSideNav = {
             $('#modalApiProgramHeader').html(object.name);
 
             cme.getDoc().setValue(object.code);
+            code = object.code;
+            
             // Refresh CodeMirror
             $('#modalApiProgram').openModal();
             setTimeout(function () {
@@ -237,5 +246,21 @@ FFaplApiSideNav = {
         var objID = element.getElementsByTagName('a')[0].getAttribute("details");
         var apiObj = API.getObjectById(objID); 
         ev.dataTransfer.setData("text", API.getName(apiObj));
-    }
+    } 
+}
+
+function copyCodeToClipBoard() {
+	var tempelement = document.createElement('textarea');
+	tempelement.value = code;
+	tempelement.setAttribute('readonly', '');
+	tempelement.style = {position: 'absolute', left: '-9999px'};
+	document.body.appendChild(tempelement);
+	tempelement.select();
+	document.execCommand('copy');
+	document.body.removeChild(tempelement);
+	
+	console.log("Copied example to clip board!");
+	alert("Copied example to clip board!");
+	
+	$('#modalApiProgram').closeModal();
 }

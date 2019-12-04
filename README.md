@@ -34,6 +34,21 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ## List of changes + working features:
 
+* [04.12.2019] added function to copy example code to clip board when viewing "Programmbeispiele" in the Webinterface (updated `ffapl-sidenav-init.js`)
+* [04.12.2019] updated unique id generation in javascript; now generates random 20 digit hexadecimal string at the end instead of random 21 alphanumerical symbols
+* [04.12.2019] updated Impressum
+* [04.12.2019] updated comments and removed redundant ones
+
+---
+
+* [27-11-2019] Webinterface now works with Firefox, Chrome, Chromium based Browsers and Edge (Internet Explorer NOT supported anymore!)
+* [27-11-2019] added @PreDestroy methods to properly shutdown the application (even with running threads and sunset processes)
+* [27-11-2019] moved configutation of ThreadPool to external `threadpoolconfig.properties` file
+* [27-11-2019] updated `sunset_shutdown.bat` file to shutdown the SpringBoot Application and all of its subprocesses (currently not a "graceful" shutdown)
+* [27-11-2019] added Error400 and Error405 to CustomErrorController
+
+---
+
 * [20-11-2019] saving code in browser now works with newer versions of Edge/IE
 * [20-11-2019] added option to stop SpringBoot Application by storing PID of Application Context in local file (`./bin/shutdown.pid`) and then executing a *bat-file which kills the specific process (different commands for Windows and Linux!)
 * [20-11-2019] added `sunset_shutdown.bat` file
@@ -163,19 +178,11 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-## List of features to implement/create in the future:
+## List of features to potentially implement/create in the future:
 * add feature to notify users when they have to wait in queue for the calculation or when their calculation starts after being placed in the queue
 * add more unit tests
-* improve code structure and add more methods for better structure
-* edit existing `sunset webinterface`
-	 * test browser compatability with different modern browsers!
-     * change/remove unused functions or scripts
-          * e.g. program code for PHP, old javascript (not used in this version!)
-     * add basic console logging in java script
-     * change/remove/restructure elements (e.g. buttons or sidebar elements like code snippets)
-* improve formating when printing code via the web interface and maybe include syntax highlighting
-* stopping of the spring boot app (which method would make sense?)
-
+* improve code structure
+* include syntax highlighting when printing code via the web interface
 
 * **potential future tasks, currently not needed**     
      * research `Docker` and its basic functionalities
@@ -183,4 +190,4 @@ The source code for **Sunset** can be found here: [Sunset Github](https://github
 
 ---
 
-Last edited @ [20.11.2019]
+Last edited @ [04.12.2019]
