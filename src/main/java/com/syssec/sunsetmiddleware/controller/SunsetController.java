@@ -40,28 +40,30 @@ public class SunsetController {
 
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
 	public ModelAndView executeCode(@RequestParam("code") String code, @RequestParam("uniqueId") String id)
-			throws InterruptedException, ExecutionException, TimeoutException, TaskRejectedException {	
+			throws InterruptedException, ExecutionException, TimeoutException, TaskRejectedException {
 		if (code.isEmpty()) {
 			logger.warn(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 		}
-		
+
 		logger.info("Post Request received (User-ID: " + id + ")");
 
 		this.idToCode.put(id, code);
 
 		System.out.println("Code received (User-ID: " + id + "):\n" + code);
 
-		String result = this.sunsetThreadPool.startSunsetThread(code, id);
+		String result = this.sunsetThreadPool.runSunsetThread(code, id);
 
 		ModelAndView modelAndView = new ModelAndView("index");
 		modelAndView.addObject("codeOriginal", code);
 		modelAndView.addObject("codeResult", result);
-		
+
 		this.idToCode.remove(id);
-		
-		System.out.println("Result of Execution (User-ID: " + id + ")\n" + result);
+
+		System.out.println("Result of Execution (User-ID: " + id + "):\n" + result);
 		logger.info("Sunset Execution finished (User-ID: " + id + "), returning result ...");
+		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE_AFTER_COMPLETION,
+				this.sunsetThreadPool.getActiveCount(), this.sunsetThreadPool.getQueue().size()));
 
 		return modelAndView;
 	}
@@ -71,7 +73,7 @@ public class SunsetController {
 		boolean wasCancelled = this.sunsetThreadPool.cancelExecutionOfSpecificThread(id);
 
 		logger.info(SunsetGlobalMessages.EXECUTION_CANCELLED_BY_USER + " (User-ID: " + id + ")");
-		
+
 		if (wasCancelled) {
 			logger.debug(SunsetGlobalMessages.THREAD_CANCELLED);
 		} else {
@@ -86,14 +88,16 @@ public class SunsetController {
 
 		this.idToCode.remove(id);
 
+		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE_AFTER_CANCELLING,
+				this.sunsetThreadPool.getActiveCount(), this.sunsetThreadPool.getQueue().size()));
+
 		return modelAndView;
 	}
-
 
 	public SunsetThreadPool getSunsetThreadPool() {
 		return this.sunsetThreadPool;
 	}
-	
+
 	@PreDestroy
 	public void shutdownExecutorService() {
 		System.out.println("(@PreDestroy) CONTROLLER: shutdown executor service ...");

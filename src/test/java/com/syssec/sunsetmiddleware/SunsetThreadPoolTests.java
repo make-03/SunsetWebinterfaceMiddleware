@@ -64,7 +64,7 @@ public class SunsetThreadPoolTests {
 
 	@Test
 	public void testHelloWorldCodeReturnsValidResult() throws InterruptedException, ExecutionException {
-		String result = this.sunsetThreadPool.startSunsetThread(this.getHelloWorldTestCode(), this.id);
+		String result = this.sunsetThreadPool.runSunsetThread(this.getHelloWorldTestCode(), this.id);
 
 		assertThat(result).isNotNull().isNotEmpty().isEqualTo("Hello World");
 	}
@@ -75,7 +75,7 @@ public class SunsetThreadPoolTests {
 
 	@Test
 	public void testStandardElGamalCodeReturnsValidResult() throws InterruptedException, ExecutionException {
-		String result = this.sunsetThreadPool.startSunsetThread(this.getStandardElGamalTestCode(), this.id);
+		String result = this.sunsetThreadPool.runSunsetThread(this.getStandardElGamalTestCode(), this.id);
 
 		assertThat(result).isNotNull().isNotEmpty().startsWith("message: 123\n\nciphertext: {")
 				.endsWith("decrypted into: 123");
@@ -101,7 +101,7 @@ public class SunsetThreadPoolTests {
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 
-		this.sunsetThreadPool.startSunsetThread("test", this.id);
+		this.sunsetThreadPool.runSunsetThread("test", this.id);
 
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
@@ -114,7 +114,7 @@ public class SunsetThreadPoolTests {
 
 		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
 				+ "seconds ...");
-		this.sunsetThreadPool.startSunsetThread(this.getEndlessLoopTestCode(), this.id);
+		this.sunsetThreadPool.runSunsetThread(this.getEndlessLoopTestCode(), this.id);
 
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(1);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);

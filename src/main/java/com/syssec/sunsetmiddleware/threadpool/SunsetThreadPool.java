@@ -39,7 +39,7 @@ public class SunsetThreadPool {
 		logger.info(SunsetGlobalMessages.THREAD_POOL_SUCCESSFULLY_INITIALIZED);
 	}
 
-	public String startSunsetThread(String code, String id) throws InterruptedException, ExecutionException {
+	public String runSunsetThread(String code, String id) throws InterruptedException, ExecutionException {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
 		
 		logger.debug(SunsetGlobalMessages.SUNSET_THREAD_RUN);
@@ -58,8 +58,8 @@ public class SunsetThreadPool {
 			logger.warn(SunsetGlobalMessages.SERVER_IS_OVERLOADED);
 		}
 
-		this.idToFuture.remove(id);
-
+		this.idToFuture.remove(id);	
+		
 		return result;
 	}
 
@@ -78,6 +78,9 @@ public class SunsetThreadPool {
 		});
 
 		this.idToFuture.put(id, new Pair<Future<String>, SunsetExecutor>(future, sunsetExecutor));
+		
+		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE,
+				this.getActiveCount(), this.getQueue().size()));
 
 		return future.get(this.threadPoolTaskExecutor.getKeepAliveSeconds(), TimeUnit.SECONDS);
 	}

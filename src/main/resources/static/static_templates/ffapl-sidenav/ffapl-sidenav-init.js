@@ -81,15 +81,6 @@ FFaplApiSideNav = {
             "</li>" +
             "</ul>" +
             "</li>" +
-            "<!--Program Examples-->" +
-            "<li class='no-padding'>" +
-            "<ul class='collapsible collapsible-accordion'>" +
-            "<li>" +
-            "<a class='collapsible-header waves-effect waves-teal bold'>Programmbeispiele</a>" +
-            "<div class='collapsible-body'><ul class='exProgramContainer'></ul></div>" +
-            "</li>" +
-            "</ul>" +
-            "</li>" +
             "</ul>" +
             "</div>" +
             "</li>" +
@@ -119,23 +110,35 @@ FFaplApiSideNav = {
             "</li>" +
             "</ul>" +
             "</li>" +
+            "<!--Program Examples-->" +
+            "<li class='no-padding'>" +
+            "<ul class='collapsible collapsible-accordion'>" +
+            "<li>" +
+            "<a class='collapsible-header waves-effect waves-teal bold'>Programmbeispiele</a>" +
+            "<div class='collapsible-body'><ul class='exProgramContainer'></ul></div>" +
+            "</li>" +
+            "</ul>" +
+            "</li>" +
             "</ul>" +
             "</div>" +
             "</li>" +
             "</ul>" +
             "</li>" +
 
-            "<!--Snippets-->" +
-            "<li class='no-padding'>" +
-            "<ul class='collapsible' data-collapsible='accordion'>" +
-            "<li class='bold'>" +
-            "<a class='collapsible-header waves-effect waves-teal bold'>Snippets</a>" +
-            "<div class='collapsible-body'><ul class='snippetContainer'></ul></div>" +
-            "</li>" +
-            "</ul>" +
-            "</li>" +
+            "<!--Snippets Code goes here!-->" +
+            
             "</ul>");
-
+       
+        /* // code for snippets, if needed, append this to the html string directly above
+        "<li class='no-padding'>" +
+        "<ul class='collapsible' data-collapsible='accordion'>" +
+        "<li class='bold'>" +
+        "<a class='collapsible-header waves-effect waves-teal bold'>Snippets</a>" +
+        "<div class='collapsible-body'><ul class='snippetContainer'></ul></div>" +
+        "</li>" +
+        "</ul>" +
+        "</li>" +
+		*/
 
         cme = CodeMirror.fromTextArea(document.getElementById("txtaProgramCode"), {
             theme: "eclipse",
