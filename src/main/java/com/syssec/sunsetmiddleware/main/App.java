@@ -42,7 +42,7 @@ public class App {
 		if (args.length == 0) {
 			// starting application without a parameter (default scenario)
 			SpringApplicationBuilder app = new SpringApplicationBuilder(App.class);
-			app.build().addListeners(new ApplicationPidFileWriter("./bin/shutdown.pid"));
+			app.build().addListeners(new ApplicationPidFileWriter(FILE_PATH_PID));
 			app.run();
 
 			logger.info(String.format(SunsetGlobalMessages.THREAD_POOL_DEFAULT_VALUES,

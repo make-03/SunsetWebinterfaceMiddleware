@@ -231,8 +231,8 @@ function validateForm() {
 		if (mm < 10) {
 			mm = '0' + mm;
 		}
-		var today = dd + '-' + mm + '-' + yyyy;
-		/* END code for dd_mm_yyyy format */
+		var today = yyyy + '-' + mm + '-' + dd;
+		/* END code for yyyy_mm_dd format */
 
 		/* code for hh_mm_ss format (current timestamp) */
 		Date.prototype.timeNow = function() {
