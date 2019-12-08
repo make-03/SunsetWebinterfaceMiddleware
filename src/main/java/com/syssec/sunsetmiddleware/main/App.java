@@ -22,7 +22,9 @@ import org.apache.log4j.Logger;
 /**
  * Main class used to start the SpringBoot-Application. CompoentScan-Annotion is
  * used to scan for classes that use the spring framework but are located in a
- * different package than this main class.
+ * different package than this main class. Contains logic for handling arguments
+ * passed via the command line when starting the Spring Boot Application. The
+ * arguments that are currently implemented are: --shutdown and --restart.
  * 
  * @author Markus R.
  *
@@ -36,29 +38,21 @@ public class App {
 
 	private static final Logger logger = Logger.getLogger(App.class);
 
-	private static final String FILE_PATH_PID = "./bin/shutdown.pid";
+	private static final String PID_FILE_PATH = "./bin/shutdown.pid";
 
 	public static void main(String[] args) {
 		if (args.length == 0) {
 			// starting application without a parameter (default scenario)
-			SpringApplicationBuilder app = new SpringApplicationBuilder(App.class);
-			app.build().addListeners(new ApplicationPidFileWriter(FILE_PATH_PID));
-			app.run();
-
-			logger.info(String.format(SunsetGlobalMessages.THREAD_POOL_DEFAULT_VALUES,
-					threadPoolConfiguration.getCorepoolsize(), threadPoolConfiguration.getMaxpoolsize(),
-					threadPoolConfiguration.getQueuecapacity(), threadPoolConfiguration.getKeepaliveseconds()));
-			logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
+			runNewSpringApplication();
 		} else if (args.length == 1 && args[0].equals("--shutdown")) {
 			// passing argument for shutdown of an already running SpringBoot Application!
 			logger.info(SunsetGlobalMessages.WEBSERVER_SHUTDOWN_ARGUMENT_REVEIVED);
-			shutdownRunningApplication();
+			shutdownAlreadyRunningApplication();
+			System.exit(0);
 		} else if (args.length == 1 && args[0].equals("--restart")) {
 			// passing argument for restarting an already running SpringBoot Application!
-			//logger.info(SunsetGlobalMessages.WEBSERVER_RESTART_ARGUMENT_REVEIVED);
-
-			// TODO: implement method to restart spring boot application via process signals (if possible)
-			System.exit(0);
+			logger.info(SunsetGlobalMessages.WEBSERVER_RESTART_ARGUMENT_REVEIVED);
+			restartRunningApplication();
 		} else {
 			// not supported (illegal argument(s)), throw exception and exit!
 			logger.info(SunsetGlobalMessages.ILLEGAL_ARGUMENTS_RECEIVED);
@@ -66,45 +60,74 @@ public class App {
 		}
 	}
 
-	private static void shutdownRunningApplication() {
-		Integer pid = -1;
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH_PID));
-			pid = Integer.parseInt(reader.readLine());
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
+	private static void runNewSpringApplication() {
+		SpringApplicationBuilder app = new SpringApplicationBuilder(App.class);
+		app.build().addListeners(new ApplicationPidFileWriter(PID_FILE_PATH));
+		app.run();
 
-		if (pid == null || pid < 0) {
+		logger.info(String.format(SunsetGlobalMessages.THREAD_POOL_DEFAULT_VALUES,
+				threadPoolConfiguration.getCorepoolsize(), threadPoolConfiguration.getMaxpoolsize(),
+				threadPoolConfiguration.getQueuecapacity(), threadPoolConfiguration.getKeepaliveseconds()));
+		logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
+	}
+
+	private static void shutdownAlreadyRunningApplication() {
+		Integer pid = readPidFromFile();
+
+		if (!isPidValid(pid)) {
+			logger.error(SunsetGlobalMessages.PID_IS_NOT_VALID);
 			throw new IllegalArgumentException(SunsetGlobalMessages.PID_IS_NOT_VALID);
 		}
-
-		System.out.println("PID = " + pid);
 
 		String cmd = "TASKKILL /PID " + pid + " /T /F";
 		try {
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			System.exit(0);
 		}
 
 		overwritePidInFile();
 
-		System.out.println("Shutdown Application!");
+		System.out.println("Shutdown running Spring Boot Application!");
+	}
 
-		System.exit(0);
+	private static void restartRunningApplication() {
+		shutdownAlreadyRunningApplication();
+		runNewSpringApplication();
+	}
+
+	private static Integer readPidFromFile() {
+		Integer pid = -1;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(PID_FILE_PATH));
+			pid = Integer.parseInt(reader.readLine());
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			System.exit(0);
+		}
+
+		return pid;
+	}
+
+	private static boolean isPidValid(Integer pid) {
+		if (pid == null || pid < 0) {
+			return false;
+		}
+		return true;
 	}
 
 	private static void overwritePidInFile() {
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH_PID));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(PID_FILE_PATH));
 			writer.write("");
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			System.exit(0);
 		}
 	}

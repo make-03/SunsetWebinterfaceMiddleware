@@ -28,8 +28,8 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 public class SunsetExecutor {
 	private final Logger logger = Logger.getLogger(SunsetExecutor.class);
 	
-	private final String SUNSET_PATH = "sunset.jar";
-	private final int MAXIMUM_RESULT_STRING_LENGTH = 32768;
+	private final String SUNSET_PATH = "./sunset.jar";
+	private final int MAXIMUM_RESULT_STRING_LENGTH = 65536;
 
 	private Process process;
 	private int timeoutSeconds;
@@ -44,6 +44,15 @@ public class SunsetExecutor {
 		}
 	}
 
+	/**
+	 * Method for starting a calculation using a separate Sunset process passing 
+	 * the received code for execution. Returns the calculated result as a String.
+	 * 
+	 * @param receivedCode
+	 * @return resultCode
+	 * @throws TimeoutException
+	 * @throws InterruptedException
+	 */
 	public String executeCommand(String receivedCode) throws TimeoutException, InterruptedException {
 		if (receivedCode.isEmpty()) {
 			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);

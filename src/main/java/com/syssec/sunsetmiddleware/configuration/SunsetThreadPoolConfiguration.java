@@ -8,6 +8,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+/**
+ * Configuation class for configuring the ThreadPool and the underlying ThreadPoolTaskExecutor. 
+ * Reads data from external properties file stored in "./threadpoolconfig.properties".
+ * 
+ * @author Markus R.
+ *
+ */
 public class SunsetThreadPoolConfiguration {
 	private int corepoolsize, maxpoolsize, queuecapacity, keepaliveseconds;
 	private String threadnameprefix;

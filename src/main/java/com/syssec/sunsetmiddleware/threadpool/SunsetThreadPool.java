@@ -21,9 +21,10 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 import javafx.util.Pair;
 
 /**
- * Class for managing the ThreadPoolTaskExecutor. Each thread
- * (Future<String> object) starts its own process of sunset to calculate the
- * result.
+ * Class for managing the ThreadPoolTaskExecutor and handling other events that
+ * might occur (e.g. Timeout, TaskRejection when all Threads and the queue are
+ * full). Each thread (Future<String> object) starts its own process of sunset
+ * to calculate the result.
  * 
  * @author Markus R.
  *
@@ -41,7 +42,7 @@ public class SunsetThreadPool {
 
 	public String runSunsetThread(String code, String id) throws InterruptedException, ExecutionException {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
-		
+
 		logger.debug(SunsetGlobalMessages.SUNSET_THREAD_RUN);
 
 		String result;
@@ -58,8 +59,8 @@ public class SunsetThreadPool {
 			logger.warn(SunsetGlobalMessages.SERVER_IS_OVERLOADED);
 		}
 
-		this.idToFuture.remove(id);	
-		
+		this.idToFuture.remove(id);
+
 		return result;
 	}
 
@@ -72,15 +73,15 @@ public class SunsetThreadPool {
 				if (sunsetExecutor.isProcessAlive()) {
 					sunsetExecutor.destroyProcess();
 				}
-				logger.warn(SunsetGlobalMessages.EXCEPTION, e);
+				logger.warn(e.getMessage());
 			}
 			return SunsetGlobalMessages.THREADPOOLTASKEXECUTOR_ERROR;
 		});
 
 		this.idToFuture.put(id, new Pair<Future<String>, SunsetExecutor>(future, sunsetExecutor));
-		
-		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE,
-				this.getActiveCount(), this.getQueue().size()));
+
+		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE, this.getActiveCount(),
+				this.getQueue().size()));
 
 		return future.get(this.threadPoolTaskExecutor.getKeepAliveSeconds(), TimeUnit.SECONDS);
 	}
@@ -118,6 +119,11 @@ public class SunsetThreadPool {
 		return this.threadPoolTaskExecutor.getKeepAliveSeconds();
 	}
 
+	/**
+	 * Method for getting the queue capacity initially set when starting the
+	 * application
+	 * 
+	 */
 	public int getQueueCapacity() {
 		return App.threadPoolConfiguration.getQueuecapacity();
 	}
@@ -130,18 +136,32 @@ public class SunsetThreadPool {
 		return this.threadPoolTaskExecutor.getPoolSize();
 	}
 
+	/**
+	 * Method for getting the queue of the underlying ThreadPoolExecutor.
+	 * 
+	 */
 	public BlockingQueue<Runnable> getQueue() {
 		return this.threadPoolTaskExecutor.getThreadPoolExecutor().getQueue();
 	}
 
+	/**
+	 * Method for getting the approximate total task count of the underlying
+	 * ThreadPoolExecutor that have ever been scheduled for execution.
+	 * 
+	 */
 	public long getTaskCount() {
 		return this.threadPoolTaskExecutor.getThreadPoolExecutor().getTaskCount();
 	}
 
+	/**
+	 * Method for getting the approximate completed task count of the underlying
+	 * ThreadPoolExecutor that have ever been scheduled for execution.
+	 * 
+	 */
 	public long getCompletedTaskCount() {
 		return this.threadPoolTaskExecutor.getThreadPoolExecutor().getCompletedTaskCount();
 	}
-	
+
 	@PreDestroy
 	public void shutdownThreadPool() {
 		System.out.println("(@PreDestroy) THREADPOOL: shutdown threadpool ...");

@@ -1,6 +1,16 @@
-## List of changes + working features:
+===================================
+# Changelist of the project
+===================================
 
-* [2019-12-07] added code for shutting down application by passing argument via commandline (e.g. --shutdown), updated App.class accordingly
+* [2019-12-08] added code for handling the `--restart` argument being passed in App.class
+* [2019-12-08] moved some code in App.class to private methods for better structure
+* [2019-12-08] added javadoc to classes and specific methods
+* [2019-12-08] removed the sunset_shutdown.bat script since it is not needed anymore
+* [2019-12-08] updated README with short instruction on how to start and manage a Spring Boot Application
+
+---
+
+* [2019-12-07] added code for shutting down application by passing argument via commandline (e.g. `--shutdown`), updated App.class accordingly
 * [2019-12-07] now also logging active threads and threads in queue when code is executed and when something is returned to the user
 * [2019-12-07] updated Global Messages and added new ones
 * [2019-12-07] added comments to threadpoolconfig file
@@ -15,7 +25,7 @@
 * [2019-12-04] updated unique id generation in javascript; now generates random 20 digit hexadecimal string at the end instead of random 21 alphanumerical symbols
 * [2019-12-04] updated Impressum
 * [2019-12-04] updated comments and removed redundant ones
-* [2019-12-04] added @PreDestroy methods to App class
+* [2019-12-04] added @PreDestroy methods to App.class
 
 ---
 
@@ -157,6 +167,7 @@
 ---
 
 ## List of features to potentially implement/create in the future:
+* user docker and deploy this application inside a docker container
 * add feature to notify users when they have to wait in queue for the calculation or when their calculation starts after being placed in the queue
 * add more unit tests
 * improve code structure

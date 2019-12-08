@@ -1,5 +1,10 @@
 package com.syssec.sunsetmiddleware.messages;
 
+/**
+ * Class containing a central location for storing all public global messages 
+ * used by the other methods etc. of this program.
+ * 
+ */
 public class SunsetGlobalMessages {
 	/* Server status messages */
 	public static final String WEBSERVER_SUCCESSFULLY_STARTED = "Sunset Webserver successfully started!";
@@ -17,7 +22,7 @@ public class SunsetGlobalMessages {
 	/* Exception and Errors messages */
 	public static final String ILLEGAL_ARGUMENTS_RECEIVED = "The argument(s) that were passed are not valid!";
 	public static final String EMPTY_CODE_RECEIVED = "Empty input code received!";
-	public static final String TIMEOUT_EXCEPTION = "Timeout occurred after %d seconds!";
+	public static final String TIMEOUT_EXCEPTION = "Timeout occurred after %d seconds, cancelling execution!";
 	public static final String SERVER_IS_OVERLOADED = "Server is overloaded right now!";
 	public static final String IO_EXCEPTION = "IO Exception occurred!";
 	public static final String SIZE_LIMIT_EXCEEDED_EXCEPTION = "Size of result String exceeded maximal length %d!";
