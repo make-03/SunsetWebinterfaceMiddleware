@@ -28,25 +28,25 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
  */
 @Controller
 public class SunsetController {
-	private final Logger logger = Logger.getLogger(SunsetController.class);
+	private static final Logger LOGGER = Logger.getLogger(SunsetController.class);
 
 	private SunsetThreadPool sunsetThreadPool;
 	private Map<String, String> idToCode = new ConcurrentHashMap<>();
 
 	public SunsetController() {
 		this.sunsetThreadPool = new SunsetThreadPool();
-		logger.info(SunsetGlobalMessages.CONTROLLER_SUCCESSFULLY_LOADED);
+		LOGGER.info(SunsetGlobalMessages.CONTROLLER_SUCCESSFULLY_LOADED);
 	}
 
 	@RequestMapping(value = { "/result" }, method = RequestMethod.POST)
 	public ModelAndView executeCode(@RequestParam("code") String code, @RequestParam("uniqueId") String id)
 			throws InterruptedException, ExecutionException, TimeoutException, TaskRejectedException {
 		if (code.isEmpty()) {
-			logger.warn(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
+			LOGGER.warn(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 		}
 
-		logger.info("Post Request received (User-ID: " + id + ")");
+		LOGGER.info("Post Request received (User-ID: " + id + ")");
 
 		this.idToCode.put(id, code);
 
@@ -61,8 +61,8 @@ public class SunsetController {
 		this.idToCode.remove(id);
 
 		System.out.println("Result of Execution (User-ID: " + id + "):\n" + result);
-		logger.info("Sunset Execution finished (User-ID: " + id + "), returning result ...");
-		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE_AFTER_COMPLETION,
+		LOGGER.info("Sunset Execution finished (User-ID: " + id + "), returning result ...");
+		LOGGER.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE_AFTER_COMPLETION,
 				this.sunsetThreadPool.getActiveCount(), this.sunsetThreadPool.getQueue().size()));
 
 		return modelAndView;
@@ -72,12 +72,12 @@ public class SunsetController {
 	public ModelAndView cancelExecution(@RequestParam("uniqueId2") String id) {
 		boolean wasCancelled = this.sunsetThreadPool.cancelExecutionOfSpecificThread(id);
 
-		logger.info(SunsetGlobalMessages.EXECUTION_CANCELLED_BY_USER + " (User-ID: " + id + ")");
+		LOGGER.info(SunsetGlobalMessages.EXECUTION_CANCELLED_BY_USER + " (User-ID: " + id + ")");
 
 		if (wasCancelled) {
-			logger.debug(SunsetGlobalMessages.THREAD_CANCELLED);
+			LOGGER.debug(SunsetGlobalMessages.THREAD_CANCELLED);
 		} else {
-			logger.debug(SunsetGlobalMessages.THREAD_CANCELLED_FAILED);
+			LOGGER.debug(SunsetGlobalMessages.THREAD_CANCELLED_FAILED);
 		}
 
 		String code = this.idToCode.get(id);
@@ -88,7 +88,7 @@ public class SunsetController {
 
 		this.idToCode.remove(id);
 
-		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE_AFTER_CANCELLING,
+		LOGGER.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE_AFTER_CANCELLING,
 				this.sunsetThreadPool.getActiveCount(), this.sunsetThreadPool.getQueue().size()));
 
 		return modelAndView;

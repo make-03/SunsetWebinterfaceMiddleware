@@ -32,7 +32,8 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { SunsetController.class })
 public class SunsetControllerTests {
-	private final Logger logger = Logger.getLogger(SunsetControllerTests.class);
+	private static final Logger LOGGER = Logger.getLogger(SunsetControllerTests.class);
+	
 	private final int TIMEOUT_SECONDS = 5;
 
 	private SunsetController sunsetController;
@@ -154,7 +155,7 @@ public class SunsetControllerTests {
 
 	@Test
 	public void testTimeoutOfExecutionReturnsCorrectResult() throws Exception {
-		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
+		LOGGER.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
 				+ " seconds ...");
 		MvcResult result = this.mockMvc
 				.perform(post("/result").param("code", this.getEndlessLoopTestCode()).param("uniqueId", this.id))

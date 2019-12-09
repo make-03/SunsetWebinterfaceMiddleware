@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 public class App {
 	public static SunsetThreadPoolConfiguration threadPoolConfiguration = new SunsetThreadPoolConfiguration();
 
-	private static final Logger logger = Logger.getLogger(App.class);
+	private static final Logger LOGGER = Logger.getLogger(App.class);
 
 	private static final String PID_FILE_PATH = "./bin/shutdown.pid";
 
@@ -46,16 +46,16 @@ public class App {
 			runNewSpringApplication();
 		} else if (args.length == 1 && args[0].equals("--shutdown")) {
 			// passing argument for shutdown of an already running SpringBoot Application!
-			logger.info(SunsetGlobalMessages.WEBSERVER_SHUTDOWN_ARGUMENT_REVEIVED);
+			LOGGER.info(SunsetGlobalMessages.WEBSERVER_SHUTDOWN_ARGUMENT_REVEIVED);
 			shutdownAlreadyRunningApplication();
 			System.exit(0);
 		} else if (args.length == 1 && args[0].equals("--restart")) {
 			// passing argument for restarting an already running SpringBoot Application!
-			logger.info(SunsetGlobalMessages.WEBSERVER_RESTART_ARGUMENT_REVEIVED);
+			LOGGER.info(SunsetGlobalMessages.WEBSERVER_RESTART_ARGUMENT_REVEIVED);
 			restartRunningApplication();
 		} else {
 			// not supported (illegal argument(s)), throw exception and exit!
-			logger.info(SunsetGlobalMessages.ILLEGAL_ARGUMENTS_RECEIVED);
+			LOGGER.info(SunsetGlobalMessages.ILLEGAL_ARGUMENTS_RECEIVED);
 			System.exit(0);
 		}
 	}
@@ -65,17 +65,17 @@ public class App {
 		app.build().addListeners(new ApplicationPidFileWriter(PID_FILE_PATH));
 		app.run();
 
-		logger.info(String.format(SunsetGlobalMessages.THREAD_POOL_DEFAULT_VALUES,
+		LOGGER.info(String.format(SunsetGlobalMessages.THREAD_POOL_DEFAULT_VALUES,
 				threadPoolConfiguration.getCorepoolsize(), threadPoolConfiguration.getMaxpoolsize(),
 				threadPoolConfiguration.getQueuecapacity(), threadPoolConfiguration.getKeepaliveseconds()));
-		logger.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
+		LOGGER.info(SunsetGlobalMessages.WEBSERVER_SUCCESSFULLY_STARTED);
 	}
 
 	private static void shutdownAlreadyRunningApplication() {
 		Integer pid = readPidFromFile();
 
 		if (!isPidValid(pid)) {
-			logger.error(SunsetGlobalMessages.PID_IS_NOT_VALID);
+			LOGGER.error(SunsetGlobalMessages.PID_IS_NOT_VALID);
 			throw new IllegalArgumentException(SunsetGlobalMessages.PID_IS_NOT_VALID);
 		}
 
@@ -84,7 +84,7 @@ public class App {
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			System.exit(0);
 		}
 
@@ -106,7 +106,7 @@ public class App {
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			System.exit(0);
 		}
 
@@ -127,7 +127,7 @@ public class App {
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			System.exit(0);
 		}
 	}

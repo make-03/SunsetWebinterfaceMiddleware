@@ -13,7 +13,8 @@ import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 
 public class SunsetExecutorTests {
-	private final Logger logger = Logger.getLogger(SunsetExecutorTests.class);
+	private static final Logger LOGGER = Logger.getLogger(SunsetExecutorTests.class);
+	
 	private final int TIMEOUT_SECONDS = 5;
 
 	private SunsetExecutor sunsetExecutor;
@@ -74,7 +75,7 @@ public class SunsetExecutorTests {
 
 	@Test
 	public void testProcessExecutionOfEndlessLoopThrowsInterruptedException() {
-		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
+		LOGGER.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
 				+ " seconds ...");
 		assertThatThrownBy(() -> {
 			this.sunsetExecutor.executeCommand(this.getEndlessLoopTestCode());

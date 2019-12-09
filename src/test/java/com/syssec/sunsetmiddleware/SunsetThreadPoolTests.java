@@ -17,7 +17,8 @@ import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 
 public class SunsetThreadPoolTests {
-	private final Logger logger = Logger.getLogger(SunsetThreadPoolTests.class);
+	private static final Logger LOGGER = Logger.getLogger(SunsetThreadPoolTests.class);
+
 	private final int TIMEOUT_SECONDS = 5;
 
 	private SunsetThreadPool sunsetThreadPool;
@@ -28,16 +29,19 @@ public class SunsetThreadPoolTests {
 		this.sunsetThreadPool = new SunsetThreadPool();
 		this.id = UUID.randomUUID().toString();
 		this.resetThreadPoolConfigToDefaultValues();
-		
+
 		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(this.TIMEOUT_SECONDS);
 		this.sunsetThreadPool.getThreadPoolTaskExecutor().initialize();
 	}
-	
+
 	private void resetThreadPoolConfigToDefaultValues() {
-		this.sunsetThreadPool.getThreadPoolTaskExecutor().setCorePoolSize(App.threadPoolConfiguration.getCorepoolsize());
+		this.sunsetThreadPool.getThreadPoolTaskExecutor()
+				.setCorePoolSize(App.threadPoolConfiguration.getCorepoolsize());
 		this.sunsetThreadPool.getThreadPoolTaskExecutor().setMaxPoolSize(App.threadPoolConfiguration.getMaxpoolsize());
-		this.sunsetThreadPool.getThreadPoolTaskExecutor().setQueueCapacity(App.threadPoolConfiguration.getQueuecapacity());
-		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(App.threadPoolConfiguration.getKeepaliveseconds());
+		this.sunsetThreadPool.getThreadPoolTaskExecutor()
+				.setQueueCapacity(App.threadPoolConfiguration.getQueuecapacity());
+		this.sunsetThreadPool.getThreadPoolTaskExecutor()
+				.setKeepAliveSeconds(App.threadPoolConfiguration.getKeepaliveseconds());
 		this.sunsetThreadPool.getThreadPoolTaskExecutor().initialize();
 	}
 
@@ -112,7 +116,7 @@ public class SunsetThreadPoolTests {
 		assertThat(this.sunsetThreadPool.getTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 		assertThat(this.sunsetThreadPool.getCompletedTaskCount()).isNotNull().isNotNegative().isEqualTo(0);
 
-		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
+		LOGGER.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
 				+ "seconds ...");
 		this.sunsetThreadPool.runSunsetThread(this.getEndlessLoopTestCode(), this.id);
 
@@ -124,7 +128,7 @@ public class SunsetThreadPoolTests {
 	public void testCodeWithEndlessLoopCausesTimeoutException() {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
 
-		logger.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
+		LOGGER.debug("[Test] Executing sunset code with endless loop using a timeout of " + this.TIMEOUT_SECONDS
 				+ " seconds ...");
 		assertThatThrownBy(() -> {
 			this.sunsetThreadPool.getFutureResult(sunsetExecutor, this.getEndlessLoopTestCode(), this.id);

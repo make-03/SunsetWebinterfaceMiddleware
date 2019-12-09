@@ -2,6 +2,10 @@
 # Changelist of the project
 ===================================
 
+* [2019-12-09] updated usage of logger in java classes
+
+---
+
 * [2019-12-08] added code for handling the `--restart` argument being passed in App.class
 * [2019-12-08] moved some code in App.class to private methods for better structure
 * [2019-12-08] added javadoc to classes and specific methods

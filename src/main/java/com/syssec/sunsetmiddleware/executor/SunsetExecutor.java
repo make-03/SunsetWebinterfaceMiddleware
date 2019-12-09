@@ -26,7 +26,7 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
  *
  */
 public class SunsetExecutor {
-	private final Logger logger = Logger.getLogger(SunsetExecutor.class);
+	private static final Logger LOGGER = Logger.getLogger(SunsetExecutor.class);
 	
 	private final String SUNSET_PATH = "./sunset.jar";
 	private final int MAXIMUM_RESULT_STRING_LENGTH = 65536;
@@ -40,7 +40,7 @@ public class SunsetExecutor {
 		try {
 			this.process = Runtime.getRuntime().exec("java -jar " + this.SUNSET_PATH + " --cmd");
 		} catch (IOException e) {
-			logger.warn(SunsetGlobalMessages.IO_EXCEPTION);
+			LOGGER.warn(SunsetGlobalMessages.IO_EXCEPTION);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class SunsetExecutor {
 			throw new IllegalArgumentException(SunsetGlobalMessages.EMPTY_CODE_RECEIVED);
 		}
 
-		logger.debug(SunsetGlobalMessages.SUNSET_EXECUTION_VIA_COMMANDLINE);
+		LOGGER.debug(SunsetGlobalMessages.SUNSET_EXECUTION_VIA_COMMANDLINE);
 
 		String code = receivedCode;
 		String result = "EMPTY";
@@ -83,7 +83,7 @@ public class SunsetExecutor {
 				if (System.currentTimeMillis() > timoutTime) {
 					this.closeBufferedReaderAndWriter(in, out);
 					this.destroyProcess();
-					logger.warn(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION, this.timeoutSeconds));
+					LOGGER.warn(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION, this.timeoutSeconds));
 					throw new TimeoutException(
 							String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION, this.timeoutSeconds));
 				}
@@ -98,7 +98,7 @@ public class SunsetExecutor {
 				} else {
 					this.closeBufferedReaderAndWriter(in, out);
 					this.destroyProcess();
-					logger.warn(String.format(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION, this.MAXIMUM_RESULT_STRING_LENGTH));
+					LOGGER.warn(String.format(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION, this.MAXIMUM_RESULT_STRING_LENGTH));
 					throw new SizeLimitExceededException(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION);
 				}
 			}
@@ -107,12 +107,12 @@ public class SunsetExecutor {
 
 			Instant endTime = Instant.now();
 			long elapsedTime = Duration.between(startTime, endTime).toMillis();
-			logger.debug("Duration of sunset execution: " + elapsedTime + "ms");
+			LOGGER.debug("Duration of sunset execution: " + elapsedTime + "ms");
 
 			return result.trim();
 		} catch(IOException e) {
 			this.destroyProcess();
-			logger.warn(SunsetGlobalMessages.IO_EXCEPTION);
+			LOGGER.warn(SunsetGlobalMessages.IO_EXCEPTION);
 			return SunsetGlobalMessages.IO_EXCEPTION;
 		} catch(SizeLimitExceededException e) {
 			return String.format(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION, this.MAXIMUM_RESULT_STRING_LENGTH)

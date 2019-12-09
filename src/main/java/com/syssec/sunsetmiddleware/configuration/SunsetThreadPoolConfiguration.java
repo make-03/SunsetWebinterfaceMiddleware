@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.apache.log4j.Logger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
@@ -16,6 +17,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  *
  */
 public class SunsetThreadPoolConfiguration {
+	private static final Logger LOGGER = Logger.getLogger(SunsetThreadPoolConfiguration.class);
+	
 	private int corepoolsize, maxpoolsize, queuecapacity, keepaliveseconds;
 	private String threadnameprefix;
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -42,6 +45,7 @@ public class SunsetThreadPoolConfiguration {
 			this.threadPoolTaskExecutor.initialize();
 		} catch (IOException ex) {
 			ex.printStackTrace();
+			LOGGER.error(ex.getMessage());
 			System.exit(0);
 		}
 	}

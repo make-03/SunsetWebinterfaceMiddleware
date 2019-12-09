@@ -30,20 +30,20 @@ import javafx.util.Pair;
  *
  */
 public class SunsetThreadPool {
-	private final Logger logger = Logger.getLogger(SunsetThreadPool.class);
+	private static final Logger LOGGER = Logger.getLogger(SunsetThreadPool.class);
 
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	private Map<String, Pair<Future<String>, SunsetExecutor>> idToFuture = new ConcurrentHashMap<>();
 
 	public SunsetThreadPool() {
 		this.threadPoolTaskExecutor = App.threadPoolConfiguration.getThreadPoolTaskExecutor();
-		logger.info(SunsetGlobalMessages.THREAD_POOL_SUCCESSFULLY_INITIALIZED);
+		LOGGER.info(SunsetGlobalMessages.THREAD_POOL_SUCCESSFULLY_INITIALIZED);
 	}
 
 	public String runSunsetThread(String code, String id) throws InterruptedException, ExecutionException {
 		SunsetExecutor sunsetExecutor = new SunsetExecutor();
 
-		logger.debug(SunsetGlobalMessages.SUNSET_THREAD_RUN);
+		LOGGER.debug(SunsetGlobalMessages.SUNSET_THREAD_RUN);
 
 		String result;
 		try {
@@ -52,11 +52,11 @@ public class SunsetThreadPool {
 			result = String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION,
 					threadPoolTaskExecutor.getKeepAliveSeconds());
 			sunsetExecutor.destroyProcess();
-			logger.warn(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION,
+			LOGGER.warn(String.format(SunsetGlobalMessages.TIMEOUT_EXCEPTION,
 					threadPoolTaskExecutor.getKeepAliveSeconds()));
 		} catch (TaskRejectedException e) {
 			result = SunsetGlobalMessages.SERVER_IS_OVERLOADED;
-			logger.warn(SunsetGlobalMessages.SERVER_IS_OVERLOADED);
+			LOGGER.warn(SunsetGlobalMessages.SERVER_IS_OVERLOADED);
 		}
 
 		this.idToFuture.remove(id);
@@ -73,14 +73,14 @@ public class SunsetThreadPool {
 				if (sunsetExecutor.isProcessAlive()) {
 					sunsetExecutor.destroyProcess();
 				}
-				logger.warn(e.getMessage());
+				LOGGER.warn(e.getMessage());
 			}
 			return SunsetGlobalMessages.THREADPOOLTASKEXECUTOR_ERROR;
 		});
 
 		this.idToFuture.put(id, new Pair<Future<String>, SunsetExecutor>(future, sunsetExecutor));
 
-		logger.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE, this.getActiveCount(),
+		LOGGER.debug(String.format(SunsetGlobalMessages.THREAD_POOL_UTILIZATION_MESSAGE, this.getActiveCount(),
 				this.getQueue().size()));
 
 		return future.get(this.threadPoolTaskExecutor.getKeepAliveSeconds(), TimeUnit.SECONDS);
