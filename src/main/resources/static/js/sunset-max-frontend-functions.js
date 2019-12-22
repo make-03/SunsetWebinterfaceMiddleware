@@ -146,11 +146,13 @@ function getCode() {
 }
 
 function validateForm() {
-	var code = getCode();
+	var code = getCode().trim(); // removes all leading and trailing whitespaces of the string
+	
 	if (!code.length > 0) {
 		alert("Please enter some code before executing.");
 	    return false;
 	}
+	
 	return true;
 }
 
@@ -158,8 +160,8 @@ function validateForm() {
 {
 	function onBtnExecute() {
 		console.log('Clicked execution button!');
-
-		var code = getCode();
+		
+		var code = getCode().trim(); 
 		
 		if (!code.length > 0) {
 			console.log('No code entered! Cannot execute empty code!');
