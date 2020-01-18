@@ -2,6 +2,19 @@
 # Changelist of the project
 ===================================
 
+* [2020-01-18] updated files for final version before release and updated the README-file
+* [2020-01-18] generated new keystore-file with private certificate with a validity of 3600 days
+
+---
+
+* [2020-01-04] added reference url for disclaimer in footer
+
+---
+
+* [2019-12-22] added trim() to remove whitespaces from code
+
+---
+
 * [2019-12-09] updated usage of logger in java classes
 
 ---
@@ -171,7 +184,7 @@
 ---
 
 ## List of features to potentially implement/create in the future:
-* user docker and deploy this application inside a docker container
+* use docker and deploy this application inside a docker container
 * add feature to notify users when they have to wait in queue for the calculation or when their calculation starts after being placed in the queue
 * add more unit tests
 * improve code structure
@@ -179,4 +192,4 @@
 
 ---
 
-Last edited @ [2019-12-08]
+Last edited @ [2020-01-18]
