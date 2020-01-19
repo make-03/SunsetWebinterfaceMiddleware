@@ -2,6 +2,10 @@
 # Changelist of the project
 ===================================
 
+* [2020-01-19] updated README
+
+---
+
 * [2020-01-18] updated files for final version before release and updated the README-file
 * [2020-01-18] generated new keystore-file with private certificate with a validity of 3600 days
 
