@@ -8,7 +8,7 @@ The source code for **Sunset** is publicly available and can be found here: [Sun
 
 ---
 
-##### Generating the Spring Boot Application for deploying the middleware server
+### Generating the Spring Boot Application
 
 If you want to generate a jar-file for deploying the middleware server yourself, you need the following software:
 
@@ -27,7 +27,11 @@ The name of the generated application (`sunsetmiddleware-1.0.jar` by default) is
 
 ---
 
-##### [IMPORTANT] For executing the generated Spring Boot jar file via command line: `keystore.jks`, `sunset.jar` and `threadpoolconfig.properties` must be copied to the same folder from where the generated `jar` file is executed! These files should also be moved to a different folder than the `target` folder, because the contents of this folder are always deleted every time you start the Maven Build defined above.
+### Starting the Spring Boot Application
+
+Now that the Spring Boot Application has been generated, the next step is to start the application and run the middlware sever.
+
+[IMPORTANT] For executing the generated Spring Boot jar file via command line: `keystore.jks`, `sunset.jar` and `threadpoolconfig.properties` must be copied to the same folder from where the generated `jar` file is executed! These files should also be moved to a different folder than the `target` folder, because the contents of this folder are always deleted every time you start the Maven Build defined above.
 
 When starting the Webserver use the following command via the command line or Power Shell when you are in the same folder as the generated Spring Boot `jar` file:<br/><br/> `java -jar sunsetmiddleware-1.0.jar`<br/>
 
