@@ -29,7 +29,7 @@ public class SunsetExecutor {
 	private static final Logger LOGGER = Logger.getLogger(SunsetExecutor.class);
 	
 	private final String SUNSET_PATH = "./sunset.jar";
-	private final int MAXIMUM_RESULT_STRING_LENGTH = 65536;
+	private final int MAXIMUM_RESULT_STRING_LENGTH = 2097152;
 
 	private Process process;
 	private int timeoutSeconds;
