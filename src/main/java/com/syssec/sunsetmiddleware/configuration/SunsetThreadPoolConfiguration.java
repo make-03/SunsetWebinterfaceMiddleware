@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
- * Configuation class for configuring the ThreadPool and the underlying ThreadPoolTaskExecutor. 
+ * Configuration class for configuring the ThreadPool and the underlying ThreadPoolTaskExecutor. 
  * Reads data from external properties file stored in "./threadpoolconfig.properties".
  * 
  * @author Markus R.
@@ -46,7 +46,7 @@ public class SunsetThreadPoolConfiguration {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			LOGGER.error(ex.getMessage());
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 

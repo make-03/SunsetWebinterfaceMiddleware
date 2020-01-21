@@ -14,6 +14,8 @@ public class SunsetGlobalMessages {
 	public static final String THREAD_POOL_SUCCESSFULLY_INITIALIZED = "Sunset Thread Pool successfully initialized!";
 	public static final String THREAD_POOL_DEFAULT_VALUES = 
 			"Default values for ThreadPool: [Core Pool Size=%d, Max Pool Size=%d, Queue Capacity=%d, Keep Alive Seconds=%d]";
+	public static final String SUNSET_INTERPRETER_VERSION_INFO = 
+			"Using the [%s] interpreter file for executing code. Make sure your local Java installation is compatible with this file!";
 
 	/* Messages about executing threads and processes */
 	public static final String SUNSET_THREAD_RUN = "Starting Sunset Thread!";
@@ -29,6 +31,7 @@ public class SunsetGlobalMessages {
 	public static final String EXCEPTION = "Exception occurred!";
 	public static final String THREADPOOLTASKEXECUTOR_ERROR = "ThreadPoolTaskExecutor error!";
 	public static final String PID_IS_NOT_VALID = "Could not retrieve a valid PID from the file!";
+	public static final String SUNSET_INTERPRETER_PATH_INVALID = "Sunset Interpreter path is invalid!";
 
 	/* Messages about manually canceling a calculation */
 	public static final String EXECUTION_CANCELLED_BY_USER = "Execution was cancelled by the user!";

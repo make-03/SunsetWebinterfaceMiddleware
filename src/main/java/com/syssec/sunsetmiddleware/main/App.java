@@ -20,7 +20,7 @@ import javax.annotation.PreDestroy;
 import org.apache.log4j.Logger;
 
 /**
- * Main class used to start the SpringBoot-Application. CompoentScan-Annotion is
+ * Main class used to start the SpringBoot-Application. CompoentScan-Annotation is
  * used to scan for classes that use the spring framework but are located in a
  * different package than this main class. Contains logic for handling arguments
  * passed via the command line when starting the Spring Boot Application. The
@@ -56,7 +56,7 @@ public class App {
 		} else {
 			// not supported (illegal argument(s)), throw exception and exit!
 			LOGGER.info(SunsetGlobalMessages.ILLEGAL_ARGUMENTS_RECEIVED);
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class App {
 		} catch (IOException e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
-			System.exit(0);
+			System.exit(1);
 		}
 
 		overwritePidInFile();
@@ -107,7 +107,7 @@ public class App {
 		} catch (IOException e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
-			System.exit(0);
+			System.exit(1);
 		}
 
 		return pid;
@@ -128,7 +128,7 @@ public class App {
 		} catch (IOException e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 

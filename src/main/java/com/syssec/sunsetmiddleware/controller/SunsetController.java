@@ -20,8 +20,8 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 
 /**
  * Controller class for communication between client (browser) and server.
- * Defines the behavior for execution of code and the user manaully cancelling
- * the excecution.
+ * Defines the behavior for execution of code and the user manually canceling
+ * the execution.
  * 
  * @author Markus R.
  *

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Configuation class for automatically redirecting all calls made to port 8080 (HTTP) to port 443 (HTTPS).
+ * Configuration class for automatically redirecting all calls made to port 8080 (HTTP) to port 443 (HTTPS).
  * 
  * @author Markus R.
  *

@@ -8,7 +8,7 @@ The source code for **Sunset** is publicly available and can be found here: [Sun
 
 ---
 
-### Generating the Spring Boot Application
+### Generating the Spring Boot Application (Middleware Server)
 
 If you want to generate a jar-file for deploying the middleware server yourself, you need the following software:
 
@@ -19,34 +19,39 @@ If you want to generate a jar-file for deploying the middleware server yourself,
 
 For the first step you use Git to clone this public repository to your local computer. 
 
-After that you load this project into the workspace of your Java IDE. In Eclipse you can do this by going to: `File -> Import -> Git -> Projects from Git (with smart import) -> Existing local repository -> choose the Repository (SunsetWebinterfaceMiddleware [master]) -> choose the folder for the project -> Finish)`. Now you should have the imported project visible in the `Project Explorer`/`Package Explorer`. If you see parts of the project hierarchy marked red you might have to do update the maven dependencies defined in the `pom.xml`-file. Right click on the top level folder of the project (`SunsetWebinterfaceMiddleware [boot][devtools][SunsetWebinterfaceMiddleware master]`), go to `Maven` and click `Update Project`. This should resolve the issues with certain dependencies.
+After that you load this project into the workspace of your Java IDE. In Eclipse you can do this by going to: `File -> Import -> Git -> Projects from Git (with smart import) -> Existing local repository -> choose the Repository (SunsetWebinterfaceMiddleware [master]) -> choose the folder for the project -> Finish`. Now you should have the imported project visible in the `Project Explorer`/`Package Explorer`. If you see parts of the project hierarchy marked red you might have to do update the maven dependencies defined in the `pom.xml`-file. Right click on the top level folder of the project (`SunsetWebinterfaceMiddleware [boot][devtools][SunsetWebinterfaceMiddleware master]`), go to `maven` and click `Update Project`. This should resolve the issues with certain dependencies.
 
-The last step you need to do is generate the Spring Boot file for deploying the Middleware Server. For this step you need to execute a specific Maven Build Run Configuration. For Eclipse go to the top menu bar, click on `Run -> Run Configurations ...`. This should open a window of all Run Configurations defined in this workspace. In the left menu, right click on `Maven Build` and select `New Configuration`. For the entry `name` you can personally choose a name for this configuration by yourself. Then for the entry `Base directory` click on `Workspace...` and choose the project name (`SunsetWebinterfaceMiddleware [boot][devtools][SunsetWebinterfaceMiddleware master]`). The last step is to define the `Goals` that maven should consider when generating the files. Here you enter the following goals: `clean validate compile test-compile test package` (separated with a blank space), then click on `Apply` to save these settings and then click on `Run` to start the Maven Build. If all these goals were successfully executed you should see a `BUILD SUCCESS` output in the console of your IDE and the generated files in the `target`-folder inside the project, including the `sunsetmiddleware-1.0.jar` file, which contains the Spring Boot Application. 
+The last step you need to do is generate the Spring Boot file for deploying the Middleware Server. For this step you need to execute a specific maven Build Run Configuration. For Eclipse go to the top menu bar, click on `Run -> Run Configurations ...`. This should open a window of all Run Configurations defined in this workspace. In the left menu, right click on `maven Build` and select `New Configuration`. For the entry `name` you can personally choose a name for this configuration by yourself. Then for the entry `Base directory` click on `Workspace...` and choose the project name (`SunsetWebinterfaceMiddleware [boot][devtools][SunsetWebinterfaceMiddleware master]`). The last step is to define the `Goals` that maven should consider when generating the files. Here you enter the following goals: `clean validate compile test-compile test package` (separated with a blank space), then click on `Apply` to save these settings and then click on `Run` to start the maven Build. If all these goals were successfully executed you should see a `BUILD SUCCESS` output in the console of your IDE and the generated files in the `target`-folder inside the project, including the `sunsetmiddleware-1.0.0.jar` file, which contains the Spring Boot Application. 
 
-The name of the generated application (`sunsetmiddleware-1.0.jar` by default) is defined in the `pom.xml`-file under the entries `<artifactId>` and `<version>` before the `properties` and `parent` entry. These values can be changed. You need to run the Maven Build again for these changes to take effect!
+The name of the generated application (`sunsetmiddleware-1.0.0.jar` by default) is defined in the `pom.xml`-file under the entries `<artifactId>` and `<version>` before the `properties` and `parent` entry. These values can be changed. You need to run the maven Build again for these changes to take effect!
 
 ---
 
-### Starting the Spring Boot Application
+### Starting the Middleware Server
 
-Now that the Spring Boot Application has been generated, the next step is to start the application and run the middlware sever.
+Now that the Spring Boot Application has been generated, the next step is to start the application and run the middleware sever.<br/> 
+**For this software to work properly you need Java 8 or newer installed!**
 
-[IMPORTANT] For executing the generated Spring Boot jar file via command line: `keystore.jks`, `sunset.jar` and `threadpoolconfig.properties` must be copied to the same folder from where the generated `jar` file is executed! These files should also be moved to a different folder than the `target` folder, because the contents of this folder are always deleted every time you start the Maven Build defined above.
+The provided `jar`-file for executing the sunset interpreter comes in 2 versions depending on the local java version installed. There is `sunset_jre8.jar` if you have Java 8 or `sunset_jre9+.jar` if you have Java 9 or newer installed (files from the [Sunset Github Repository](https://github.com/stefan-rass/sunset-ffapl)).
 
-When starting the Webserver use the following command via the command line or Power Shell when you are in the same folder as the generated Spring Boot `jar` file:<br/><br/> `java -jar sunsetmiddleware-1.0.jar`<br/>
+The default file used by this application is the `sunset_jre8.jar` file (for Java 8) but can be changed manually in the `application.properties` file under the `sunset.interpreter.path` entry by the changing the value of the property. You have to run the maven build again for this change to take effect.
 
-This command should start the Spring Boot Application and make the web interface accessible locally. You can open it by typing the following URL in a modern browser:<br/>`https://localhost`<br/>
+**IMPORTANT:** For executing the generated Spring Boot jar file via command line: `keystore.jks`, `sunset_jre8.jar`/`sunset_jre9+.jar` and `threadpoolconfig.properties` must be copied to the same folder from where the generated `jar` file (`sunsetmiddleware-1.0.0.jar`) is executed. These files should also be moved to a different folder than the `target` folder of the project, because the contents of this folder are always deleted every time you start the maven Build defined above. 
+
+When starting the Webserver use the following command via the command line or Power Shell when you are in the same folder as the generated Spring Boot `jar` file:<br/><br/> `java -jar sunsetmiddleware-1.0.0.jar`<br/>
+
+This command should start the Spring Boot Application and make the web interface accessible locally. You can access it by typing the following URL in a modern browser:<br/>`https://localhost`<br/>
 
 The certificate used for testing this project is a private certificate generated by the tool `keytool` inside the `keystore.jks`-file. It is needed because the server can only be accessed via `https` and not `http`. The credentials for using this certificate are stored in the `application.properties`-file under the `CONFIGURATION FOR CERTIFICATE AND USING HTTPS` section. It was generated on January 18, 2019 and has a validity of 3650 days. Keep in mind that you should only use the private certificate for testing the server locally. If you want to provide access to the web interface over the Internet it is highly advised to use a public certificate that is valid and can be verified by a trusted source.
 
-Once the Server is running there will be new files generated; the first one contains the PID of the Spring Boot Application running (name of this process is "Java" under Windows) and is stored in `./bin/shutdown.pid`. The second one is a log file which contains useful information about the lifecycle of the server and the events happening. It is stored in `./logs/sunsetLog.log`.
+Once the Server is running there will be new files generated; the first one contains the PID of the Spring Boot Application running (name of this process is "Java" under Windows) and is stored in `./bin/shutdown.pid`. The second one is a log file which contains useful information about the server and the events happening. It is stored in `./logs/sunsetLog.log`.
 
 There are also arguments that the user can pass (from another opened Power Shell / Command Line). For this you also need to be in the folder that contains the `jar` file generated by Spring Boot. There are currently 2 arguments that can be passed:<br/>
 
-* `java -jar <NAME_OF_SUNSET_APPLICATION>.jar --shutdown` The **shutdown** argument shuts down an already running Application of Spring Boot.
+* `java -jar sunsetmiddleware-1.0.0.jar --shutdown` The **shutdown** argument shuts down an already running Application of Spring Boot.
 
 
-* `java -jar <NAME_OF_SUNSET_APPLICATION>.jar --restart` The **restart** argument does the same thing as shutdown during the first step and then starts a new Application of Spring Boot. This is useful if there were changes to some external configuration (like properties file for ThreadPool or logging) without having to Run a Maven Build again.
+* `java -jar sunsetmiddleware-1.0.0.jar --restart` The **restart** argument does the same thing as shutdown during the first step and then starts a new Application of Spring Boot. This is useful if there were changes to some external configuration (like properties file for ThreadPool or logging) without having to Run a maven Build again.
 
 If the user enters an invalid argument or too many an exception is thrown and nothing happens.
 
@@ -54,11 +59,13 @@ Keep in mind when executing code using the middleware server there is a specific
 
 ---
 
+#### Software used during development:
+
 ##### Main programming languages: `Java 8` for Middleware, `Java Script (+ HTML5, CSS3)` for WebInterface
 ##### IDE used: `Eclipse Java EE IDE for Web Developers Version 2018-09 (4.9.0)`
 ##### Build-Management-Tool: `Maven`
 ##### Frameworks used: `Spring`, `Spring-Boot` (Spring Tools 4 - 4.1.0 RELEASE)
-##### Other Software used: `thymeleaf` (template engine), `Code Mirror`, `JQuery`
+##### Other Software used: `Thymeleaf` (template engine), `Code Mirror`, `JQuery`
 
 ---
 
@@ -66,4 +73,4 @@ Keep in mind when executing code using the middleware server there is a specific
 
 ---
 
-Last edited @ [2020-01-18]
+Last edited @ [2020-01-21]

@@ -1,6 +1,14 @@
 ===================================
-# Changelist of the project
+# Change list of the project
 ===================================
+
+* [2020-01-21] added 2 separate `jar` files containing the sunset interpreter for java 8 and 9 respectively
+* [2020-01-21] added property for sunset interpreter path to in `application.properties`
+* [2020-01-21] added code for reading property in SunsetExecutor
+* [2020-01-21] removed old `sunset.jar` file
+* [2020-01-21] minor improvements to code and comments
+
+---
 
 * [2020-01-19] updated README
 
@@ -196,4 +204,4 @@
 
 ---
 
-Last edited @ [2020-01-18]
+Last edited @ [2020-01-21]
