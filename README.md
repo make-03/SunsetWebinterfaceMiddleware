@@ -32,11 +32,9 @@ The name of the generated application (`sunsetmiddleware-1.0.0.jar` by default) 
 Now that the Spring Boot Application has been generated, the next step is to start the application and run the middleware sever.<br/> 
 **For this software to work properly you need Java 8 or newer installed!**
 
-The provided `jar`-file for executing the sunset interpreter comes in 2 versions depending on the local java version installed. There is `sunset_jre8.jar` if you have Java 8 or `sunset_jre9+.jar` if you have Java 9 or newer installed (files from the [Sunset Github Repository](https://github.com/stefan-rass/sunset-ffapl)).
+The provided `jar`-file for executing the sunset interpreter is called `sunset.jar`.
 
-The default file used by this application is the `sunset_jre8.jar` file (for Java 8) but can be changed manually in the `application.properties` file under the `sunset.interpreter.path` entry by the changing the value of the property. You have to run the maven build again for this change to take effect.
-
-**IMPORTANT:** For executing the generated Spring Boot jar file via command line: `keystore.jks`, `sunset_jre8.jar`/`sunset_jre9+.jar` and `threadpoolconfig.properties` must be copied to the same folder from where the generated `jar` file (`sunsetmiddleware-1.0.0.jar`) is executed. These files should also be moved to a different folder than the `target` folder of the project, because the contents of this folder are always deleted every time you start the maven Build defined above. 
+**IMPORTANT:** For executing the generated Spring Boot jar file via command line: `keystore.jks`, `sunset.jar` and `threadpoolconfig.properties` must be copied to the same folder from where the generated `jar` file (`sunsetmiddleware-1.0.0.jar`) is executed. These files should also be moved to a different folder than the `target` folder of the project, because the contents of this folder are always deleted every time you start the maven Build defined above. 
 
 When starting the Webserver use the following command via the command line or Power Shell when you are in the same folder as the generated Spring Boot `jar` file:<br/><br/> `java -jar sunsetmiddleware-1.0.0.jar`<br/>
 
@@ -61,7 +59,7 @@ Keep in mind when executing code using the middleware server there is a specific
 
 #### Software used during development:
 
-##### Main programming languages: `Java 8` for Middleware, `Java Script (+ HTML5, CSS3)` for WebInterface
+##### Main programming languages: `Java` for Middleware, `Java Script (+ HTML5, CSS3)` for WebInterface
 ##### IDE used: `Eclipse Java EE IDE for Web Developers Version 2018-09 (4.9.0)`
 ##### Build-Management-Tool: `Maven`
 ##### Frameworks used: `Spring`, `Spring-Boot` (Spring Tools 4 - 4.1.0 RELEASE)
@@ -73,4 +71,4 @@ Keep in mind when executing code using the middleware server there is a specific
 
 ---
 
-Last edited @ [2020-01-21]
+Last edited @ [2020-01-24]

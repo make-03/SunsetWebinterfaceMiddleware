@@ -13,8 +13,7 @@ bin/
 
 # ignore all *.jar files except "sunset_jre8/9+.jar" since one of these files is needed for the software to work properly
 *.jar
-!sunset_jre8.jar
-!sunset_jre9+.jar
+!sunset.jar
 
 # ignore package files
 *.war

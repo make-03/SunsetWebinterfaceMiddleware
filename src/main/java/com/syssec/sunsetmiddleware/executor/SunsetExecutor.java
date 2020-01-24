@@ -2,14 +2,11 @@ package com.syssec.sunsetmiddleware.executor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PreDestroy;
@@ -31,21 +28,17 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 public class SunsetExecutor {
 	private static final Logger LOGGER = Logger.getLogger(SunsetExecutor.class);
 	
+	private final String SUNSET_INTERPRETER_JAR_PATH = "./sunset.jar";
 	private final int MAXIMUM_RESULT_STRING_LENGTH = 2097152;
 
-	private String sunsetInterpreterJarPath;
 	private Process process;
 	private int timeoutSeconds;
 
-	public SunsetExecutor() {
-		this.sunsetInterpreterJarPath = this.getSunsetInterpreterJarPath();
-		System.out.println(String.format(SunsetGlobalMessages.SUNSET_INTERPRETER_VERSION_INFO, 
-				this.sunsetInterpreterJarPath.substring(2)));
-		
+	public SunsetExecutor() {		
 		this.timeoutSeconds = App.threadPoolConfiguration.getKeepaliveseconds() + 5;
 		
 		try {
-			this.process = Runtime.getRuntime().exec("java -jar " + this.sunsetInterpreterJarPath + " --cmd");
+			this.process = Runtime.getRuntime().exec("java -jar " + this.SUNSET_INTERPRETER_JAR_PATH + " --cmd");
 		} catch (IOException e) {
 			LOGGER.warn(SunsetGlobalMessages.IO_EXCEPTION);
 		}
@@ -92,6 +85,7 @@ public class SunsetExecutor {
 			}
 			
 			in.readLine();
+			
 			result = "";
 			String line = "";
 			while ((line = in.readLine()) != null) {
@@ -104,7 +98,7 @@ public class SunsetExecutor {
 					throw new SizeLimitExceededException(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION);
 				}
 			}
-
+			
 			this.closeBufferedReaderAndWriter(in, out);
 
 			Instant endTime = Instant.now();
@@ -120,27 +114,6 @@ public class SunsetExecutor {
 			return String.format(SunsetGlobalMessages.SIZE_LIMIT_EXCEEDED_EXCEPTION, this.MAXIMUM_RESULT_STRING_LENGTH)
 					+ "\n" + result;
 		}
-	}
-	
-	private String getSunsetInterpreterJarPath() {
-		String path = "";
-		try (InputStream input = new FileInputStream("./src/main/resources/application.properties")) {
-			Properties prop = new Properties();		
-			prop.load(input);			
-			
-			path = prop.getProperty("sunset.interpreter.path");
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			LOGGER.error(ex.getMessage());
-			System.exit(1);
-		} finally {
-			if(path.isEmpty() || !path.startsWith("./")) {
-				LOGGER.warn(SunsetGlobalMessages.SUNSET_INTERPRETER_PATH_INVALID);
-				System.exit(1);
-			}
-		}
-
-		return path;
 	}
 	
 	private void closeBufferedReaderAndWriter(BufferedReader in, BufferedWriter out) throws IOException {
