@@ -17,6 +17,8 @@ If you want to generate a jar-file for deploying the middleware server yourself,
 * Spring Boot (Spring Tools 4 or newer)
 * Git or some other software like GitHub Desktop for managing Git-Projects and Repositories.
 
+**Important**: Java 8 or newer is needed to be able to generate the sources for this project, since Maven is configured to use the compiler for Java 8 (Compiler compliance level 1.8), set in the `pom.xml` file under `<properties>`. You do not need to set the compiler level manually in your IDE.
+
 For the first step you use Git to clone this public repository to your local computer. 
 
 After that you load this project into the workspace of your Java IDE. In Eclipse you can do this by going to: `File -> Import -> Git -> Projects from Git (with smart import) -> Existing local repository -> choose the Repository (SunsetWebinterfaceMiddleware [master]) -> choose the folder for the project -> Finish`. Now you should have the imported project visible in the `Project Explorer`/`Package Explorer`. If you see parts of the project hierarchy marked red you might have to do update the maven dependencies defined in the `pom.xml`-file. Right click on the top level folder of the project (`SunsetWebinterfaceMiddleware [boot][devtools][SunsetWebinterfaceMiddleware master]`), go to `maven` and click `Update Project`. This should resolve the issues with certain dependencies.
@@ -30,7 +32,7 @@ The name of the generated application (`sunsetmiddleware-1.0.0.jar` by default) 
 ### Starting the Middleware Server
 
 Now that the Spring Boot Application has been generated, the next step is to start the application and run the middleware sever.<br/> 
-**For this software to work properly you need Java 8 or newer installed!**
+**In order to run this software you need Java 8 or newer installed!**
 
 The provided `jar`-file for executing the sunset interpreter is called `sunset.jar`.
 
