@@ -142,11 +142,11 @@ $(document)
 				});
 
 function getCode() {
-	return codeMirrorEditor.getValue();
+	return codeMirrorEditor.getValue().trim(); //trim removes all leading and trailing whitespaces of the string
 }
 
 function validateForm() {
-	var code = getCode().trim(); // removes all leading and trailing whitespaces of the string
+	var code = getCode(); 
 	
 	if (!code.length > 0) {
 		alert("Please enter some code before executing.");
@@ -214,7 +214,7 @@ function validateForm() {
 	function save() {
 		console.log('Clicked the save button!');
 
-		var code = codeMirrorEditor.getValue();
+		var code = getCode();
 
 		if (!code.length > 0) {
 			console.log('No code entered! Cannot save empty file!');
@@ -281,7 +281,7 @@ function validateForm() {
 	function print() {
 		console.log('Clicked the print button!');
 
-		var code = codeMirrorEditor.getValue();
+		var code = getCode();
 		if (!code.length > 0) {
 			alert("Please write something before printing.");
 			return;
