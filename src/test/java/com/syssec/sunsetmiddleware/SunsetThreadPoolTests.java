@@ -28,42 +28,14 @@ public class SunsetThreadPoolTests {
 	public void setUp() {
 		this.sunsetThreadPool = new SunsetThreadPool();
 		this.id = UUID.randomUUID().toString();
-		this.resetThreadPoolConfigToDefaultValues();
 
 		this.sunsetThreadPool.getThreadPoolTaskExecutor().setKeepAliveSeconds(this.TIMEOUT_SECONDS);
-		this.sunsetThreadPool.getThreadPoolTaskExecutor().initialize();
-	}
-
-	private void resetThreadPoolConfigToDefaultValues() {
-		this.sunsetThreadPool.getThreadPoolTaskExecutor()
-				.setCorePoolSize(App.threadPoolConfiguration.getCorepoolsize());
-		this.sunsetThreadPool.getThreadPoolTaskExecutor().setMaxPoolSize(App.threadPoolConfiguration.getMaxpoolsize());
-		this.sunsetThreadPool.getThreadPoolTaskExecutor()
-				.setQueueCapacity(App.threadPoolConfiguration.getQueuecapacity());
-		this.sunsetThreadPool.getThreadPoolTaskExecutor()
-				.setKeepAliveSeconds(App.threadPoolConfiguration.getKeepaliveseconds());
 		this.sunsetThreadPool.getThreadPoolTaskExecutor().initialize();
 	}
 
 	@After
 	public void tearDown() {
 		this.sunsetThreadPool.shutdownExecutorService();
-	}
-
-	@Test
-	public void testSunsetThreadPoolWithDefaultValues() {
-		assertThat(this.sunsetThreadPool.getCorePoolSize()).isNotNull().isNotNegative()
-				.isEqualTo(App.threadPoolConfiguration.getCorepoolsize());
-		assertThat(this.sunsetThreadPool.getMaxPoolSize()).isNotNull().isNotNegative()
-				.isEqualTo(App.threadPoolConfiguration.getMaxpoolsize());
-		assertThat(this.sunsetThreadPool.getQueueCapacity()).isNotNull().isNotNegative()
-				.isEqualTo(App.threadPoolConfiguration.getQueuecapacity());
-		assertThat(this.sunsetThreadPool.getTimeoutSeconds()).isNotNull().isNotNegative()
-				.isEqualTo(this.TIMEOUT_SECONDS);
-
-		this.sunsetThreadPool.shutdownExecutorService();
-
-		assertThat(this.sunsetThreadPool.getThreadPoolTaskExecutor().getActiveCount()).isEqualTo(0);
 	}
 
 	@Test
