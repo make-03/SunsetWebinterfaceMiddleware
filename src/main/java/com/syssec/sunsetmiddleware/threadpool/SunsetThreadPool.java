@@ -10,7 +10,8 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PreDestroy;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -30,7 +31,7 @@ import javafx.util.Pair;
  *
  */
 public class SunsetThreadPool {
-	private static final Logger LOGGER = Logger.getLogger(SunsetThreadPool.class);
+	private static final Logger LOGGER = LogManager.getLogger(SunsetThreadPool.class);
 
 	private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 	private Map<String, Pair<Future<String>, SunsetExecutor>> idToFuture = new ConcurrentHashMap<>();

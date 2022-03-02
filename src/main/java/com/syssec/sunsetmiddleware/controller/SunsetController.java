@@ -7,7 +7,8 @@ import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PreDestroy;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
  */
 @Controller
 public class SunsetController {
-	private static final Logger LOGGER = Logger.getLogger(SunsetController.class);
+	private static final Logger LOGGER = LogManager.getLogger(SunsetController.class);
 
 	private SunsetThreadPool sunsetThreadPool;
 	private Map<String, String> idToCode = new ConcurrentHashMap<>();

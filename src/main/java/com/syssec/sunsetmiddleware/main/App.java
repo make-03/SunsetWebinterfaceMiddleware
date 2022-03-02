@@ -17,7 +17,8 @@ import java.io.IOException;
 
 import javax.annotation.PreDestroy;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Main class used to start the SpringBoot-Application. CompoentScan-Annotation is
@@ -33,10 +34,10 @@ import org.apache.log4j.Logger;
 @ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.controller.CustomErrorController.class)
 @ComponentScan(basePackageClasses = com.syssec.sunsetmiddleware.configuration.SunsetHttpsConfiguration.class)
 @SpringBootApplication
-public class App {
+public class App{
 	public static SunsetThreadPoolConfiguration threadPoolConfiguration = new SunsetThreadPoolConfiguration();
 
-	private static final Logger LOGGER = Logger.getLogger(App.class);
+	private static final Logger LOGGER = LogManager.getLogger(App.class);
 
 	private static final String PID_FILE_PATH = "./bin/shutdown.pid";
 

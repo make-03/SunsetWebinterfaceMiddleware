@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.concurrent.TimeoutException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +13,8 @@ import org.junit.Test;
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 
-public class SunsetExecutorTests {
-	private static final Logger LOGGER = Logger.getLogger(SunsetExecutorTests.class);
+public class SunsetExecutorTest {
+	private static final Logger LOGGER = LogManager.getLogger(SunsetExecutorTest.class);
 	
 	private final int TIMEOUT_SECONDS = 5;
 

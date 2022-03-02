@@ -12,7 +12,8 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.PreDestroy;
 import javax.naming.SizeLimitExceededException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
@@ -26,7 +27,7 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
  *
  */
 public class SunsetExecutor {
-	private static final Logger LOGGER = Logger.getLogger(SunsetExecutor.class);
+	private static final Logger LOGGER = LogManager.getLogger(SunsetExecutor.class);
 	
 	private final String SUNSET_INTERPRETER_JAR_PATH = "./sunset.jar";
 	private final int MAXIMUM_RESULT_STRING_LENGTH = 2097152;
@@ -103,7 +104,7 @@ public class SunsetExecutor {
 
 			Instant endTime = Instant.now();
 			long elapsedTime = Duration.between(startTime, endTime).toMillis();
-			LOGGER.debug("Duration of sunset execution: " + elapsedTime + "ms");
+			LOGGER.info("Duration of sunset execution: " + elapsedTime + "ms");
 
 			return result.trim();
 		} catch(IOException e) {

@@ -2,6 +2,12 @@
 # Change list of the project
 ===================================
 
+* [2022-03-02] new version V1.0.1 (`sunsetmiddleware-1.0.1.jar`)
+* [2022-03-02] now uses Spring Boot Version 2.6.4
+* [2022-03-02] updated to use Log4j2 (spring-boot-starter-log4j2), new log4j2.xml configuration file
+
+---
+
 * [2020-01-21] added 2 separate `jar` files containing the sunset interpreter for java 8 and 9 respectively
 * [2020-01-21] added property for sunset interpreter path to in `application.properties`
 * [2020-01-21] added code for reading property in SunsetExecutor

@@ -6,18 +6,18 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.task.TaskRejectedException;
 
 import com.syssec.sunsetmiddleware.executor.SunsetExecutor;
-import com.syssec.sunsetmiddleware.main.App;
 import com.syssec.sunsetmiddleware.threadpool.SunsetThreadPool;
 
-public class SunsetThreadPoolTests {
-	private static final Logger LOGGER = Logger.getLogger(SunsetThreadPoolTests.class);
+public class SunsetThreadPoolTest {
+	private static final Logger LOGGER = LogManager.getLogger(SunsetThreadPoolTest.class);
 
 	private final int TIMEOUT_SECONDS = 5;
 

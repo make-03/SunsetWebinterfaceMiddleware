@@ -12,7 +12,8 @@ import static org.springframework.test.web.servlet.setup.SharedHttpSessionConfig
 
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,8 +32,8 @@ import com.syssec.sunsetmiddleware.messages.SunsetGlobalMessages;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { SunsetController.class })
-public class SunsetControllerTests {
-	private static final Logger LOGGER = Logger.getLogger(SunsetControllerTests.class);
+public class SunsetControllerTest {
+	private static final Logger LOGGER = LogManager.getLogger(SunsetControllerTest.class);
 	
 	private final int TIMEOUT_SECONDS = 5;
 
@@ -123,10 +124,10 @@ public class SunsetControllerTests {
 	@Test
 	public void testHttpOptionsRequestReturnsAllowHeaderWithOnlyPost() throws Exception {
 		MvcResult mvcResult = this.mockMvc.perform(options("/result")).andReturn();
-		assertThat(mvcResult.getResponse().getHeader("Allow")).isEqualTo("POST");
+		assertThat(mvcResult.getResponse().getHeader("Allow")).isEqualTo("POST,OPTIONS");
 
 		MvcResult mvcCancelled = this.mockMvc.perform(options("/cancelled")).andReturn();
-		assertThat(mvcCancelled.getResponse().getHeader("Allow")).isEqualTo("POST");
+		assertThat(mvcCancelled.getResponse().getHeader("Allow")).isEqualTo("POST,OPTIONS");
 	}
 
 	@Test
