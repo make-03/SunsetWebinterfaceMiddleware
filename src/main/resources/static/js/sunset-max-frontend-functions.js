@@ -128,8 +128,6 @@ $(document)
 					// UTC timestamp in seconds + "-" + string with 20 "random" hexadecimal characters
 					var uniqueId = Math.floor(Date.now() / 1000) + '-' + Math.random().toString(16).substring(2, 12)
 						+ Math.random().toString(16).substring(2, 12);
-					console.log("Generated ID: " + uniqueId); // logging ID
-																// for testing!
 					document.getElementById("uniqueId").innerHTML = uniqueId; // used
 																				// for
 																				// "sendForm"
